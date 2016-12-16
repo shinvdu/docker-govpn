@@ -94,3 +94,12 @@ PING 172.19.0.1 (172.19.0.1) 56(84) bytes of data.
 64 bytes from 172.19.0.1: icmp_seq=12 ttl=64 time=0.665 ms
 ```
 
+## Setup host routing
+
+**After startup**
+sudo ip route add  0.0.0.0/1 via 172.19.0.1 dev tap14 
+sudo ip route add  139.162.86.146  via  192.168.1.1 dev eth0
+
+**After shutdown**
+sudo ip route delete  0.0.0.0/1 via 172.19.0.1 dev tap14 
+sudo ip route delete  139.162.86.146  via  192.168.1.1  dev eth0
