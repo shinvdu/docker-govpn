@@ -5,13 +5,13 @@ be reviewable, secure, DPI/censorship-resistant, written on Go.
 
 This is the dockefile for govpn. 
 
-Its size is just 30MB.  small enough?
+Its size is just 37MB.  small enough?
 
 # How to run it
 
 ```
-$: docker pull govpn
-$: docker run -it --rm --device=/dev/net/tun:/dev/net/tun -p 1194:1194/udp  --cap-add=NET_ADMIN  govpn
+$: docker pull shinvdu/govpn
+$: docker run -it --rm --device=/dev/net/tun:/dev/net/tun -p 1194:1194/udp  --cap-add=NET_ADMIN  shinvdu/govpn
 ```
 
 make sure to use custom setting in VOLUME ["/etc/govpn"], just mount. 
@@ -21,12 +21,12 @@ $: docker run -it --rm \
    --device=/dev/net/tun:/dev/net/tun \
    -p 1194:1194/udp \
    -v /etc/govpn:/etc/govpn  \
-   --cap-add=NET_ADMIN  govpn
+   --cap-add=NET_ADMIN  shinvdu/govpn
 ```
 
 # How to create your own auth key?
 
-$: docker run -it --rm  govpn newclient Govpn
+$: docker run -it --rm  shinvdu/govpn newclient Govpn
 
 
 Type a pass, It generate a auth key for you. it looks like below. 
