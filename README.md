@@ -52,7 +52,7 @@ example
 1. create the network interface:
 ```
 tunctl -t tap14
-ip addr add 172.19.0.1/24 dev tap14
+ip addr add 172.19.0.2/24 dev tap14
 ip link set up dev tap14
 ```
 
