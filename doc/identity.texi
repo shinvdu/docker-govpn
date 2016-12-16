@@ -1,0 +1,7 @@
+@node Identity
+@subsection Identity
+
+Client's identity is 128-bit string. It is not secret, so can be
+transmitted and stored in the clear. However handshake applies PRP on it
+to make DPI and deanonymization much harder to success. It is used as a
+salt in @ref{Verifier}.

@@ -1,0 +1,17 @@
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}

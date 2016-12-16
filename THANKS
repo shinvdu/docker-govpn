@@ -1,0 +1,7 @@
+* Applied Cryptography (https://www.schneier.com/books/applied_cryptography/) (C) 1996 Bruce Schneier.
+* Strong Password-Only Authenticated Key Exchange (http://tnlandforms.us/cns05/speke.pdf) (C) 1996 David P. Jablon.
+* Augmented Encrypted Key Exchange (https://www.cs.columbia.edu/~smb/papers/aeke.pdf): a Password-Based Protocol Secure Against Dictionary Attacks and Password File Compromise (C) Steven M. Belloving, Michael Merrit.
+* Watson Ladd <watsonbladd@gmail.com> for suggestion of Elligator (http://elligator.cr.yp.to/) encoding.
+* Password Hashing Competition for Argon2 (https://password-hashing.net/#argon2).
+* Chaffing and Winnowing: Confidentiality without Encryption (http://people.csail.mit.edu/rivest/chaffing-980701.txt) (C) Ronald L. Rivest
+* Zhuoyun Wei <wzyboy@wzyboy.org> for AUR port maintaining and his documentation related fixes.

@@ -1,0 +1,4 @@
+@node Tarballs
+@section Prepared tarballs
+You can obtain releases source code prepared tarballs on
+@url{http://www.cypherpunks.ru/govpn/}.

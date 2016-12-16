@@ -1,0 +1,74 @@
+@node Client
+@section Client part
+
+Except for common @ref{Stats, -stats}, @ref{EGD, -egd} options client
+has the following ones:
+
+@table @option
+
+@item -mtu
+Expected TAP interface @ref{MTU}.
+
+@item -proto
+@ref{Network, Network protocol} to use. Can be either @emph{udp}
+(default) or @emph{tcp}.
+
+@item -proxy
+Use specified @emph{host:port} @ref{Proxy} server for accessing remote
+server.
+
+@item -proxy-auth
+Optional @emph{user:password} for HTTP Basic authorization on proxy
+server.
+
+@item -remote
+Address (@code{host:port} format) of remote server we need to connect to.
+
+@item -iface
+TAP interface name.
+
+@item -verifier
+Our client's @ref{Verifier}.
+
+@item -key
+Path to the file with the passphrase. If omitted, then you will be asked
+to enter it in the terminal.
+
+@item -timeout
+@ref{Timeout} setting in seconds.
+
+@item -timesync
+Optional @ref{Timesync, time synchronization} requirement. If set to
+zero, then no synchronization required.
+
+@item -noise
+Enable @ref{Noise}.
+
+@item -cpr
+Set @ref{CPR} in KiB/sec.
+
+@item -encless
+Enable @ref{Encless, encryptionless mode}.
+
+@item -up
+Optional path to @ref{Scripts, script} that will be executed after
+connection is established. Interface name will be given to it as a first
+argument.
+
+@item -down
+Same as @option{-up} above, but it is executed when connection is lost,
+when we exit.
+
+@end table
+
+Example up-script that calls DHCP client and IPv6 advertisement
+solicitation:
+
+@verbatim
+client% cat > up.sh <<EOF
+#!/bin/sh
+dhclient $GOVPN_IFACE
+rtsol $GOVPN_IFACE
+EOF
+client% chmod +x up.sh
+@end verbatim

@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Encless</title>
+
+<meta name="description" content="GoVPN: Encless">
+<meta name="keywords" content="GoVPN: Encless">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Glossary.html#Glossary" rel="up" title="Glossary">
+<link href="Verifier.html#Verifier" rel="next" title="Verifier">
+<link href="CPR.html#CPR" rel="prev" title="CPR">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Encless"></a>
+<div class="header">
+<p>
+Next: <a href="Verifier.html#Verifier" accesskey="n" rel="next">Verifier</a>, Previous: <a href="CPR.html#CPR" accesskey="p" rel="prev">CPR</a>, Up: <a href="Glossary.html#Glossary" accesskey="u" rel="up">Glossary</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Encryptionless-mode"></a>
+<h4 class="subsection">Encryptionless mode</h4>
+
+<p>Some jurisdictions can force user to reveal his encryption keys. However
+they can not ask for authentication (signing) keys. So you are safe to
+use authentication algorithms, but not the encryption ones. Moreover
+some countries forbids usage of encryption (but again not the
+authentication).
+</p>
+<p>GoVPN provides special encryptionless mode of operation. In this mode it
+replaces Salsa20 function used for confidentiality with rather
+well-known <a href="http://people.csail.mit.edu/rivest/chaffing-980701.txt">Chaffing-and-Winnowing</a> (CnW) technology. This is rather traffic and
+resource hungry algorithm, so we use it after
+<a href="http://theory.lcs.mit.edu/~cis/pubs/rivest/fusion.ps">All-Or-Nothing-Transformation</a> (based on
+<a href="http://cseweb.ucsd.edu/~mihir/papers/oaep.html">Optimal Asymmetric
+Encryption Padding</a>) on the data. This is confidentiality preserving
+encoding.
+</p>
+<p>AONT is just a keyless encoding of the data. CnW uses only
+authentication function. Handshake additionally uses Diffie-Hellman and
+signature algorithms. No encryption and steganography involved.
+</p>
+<p>In this mode each outgoing packet became larger on 4128 bytes and
+<a href="Noise.html#Noise">noise</a> is forcefully enabled. So this is resource hungry mode!
+</p>
+<p><strong>Beware</strong>: by default packet serial numbers are still processed
+through the XTEA encryption. It is not required for confidentiality and
+security, but for randomizing some parts of the traffic to make it
+indistinguishable from the noise, for making it more DPI-proof. It
+safely can be disabled, turned off or maybe its keys even can be
+revealed without security and forward secrecy loss.
+</p>
+<p>See <code>govpn/cnw</code> and <code>govpn/aont</code> packages for details of AONT
+and chaffing operations.
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+@node MTU
+@subsection Maximum Transmission Unit
+
+MTU option tells what maximum transmission unit is expected to get from
+TAP interface. It is per-user configuration. Incoming packets of bigger
+sizes (including the padding byte) will be ignored. If either
+@ref{Noise, noise}, @ref{Encless, encryptionless mode} or @ref{CPR} are
+enabled, then all outgoing packets are filled up to that MTU value.
+
+Default MTU equals to 1514 bytes (1500 bytes of Ethernet payload, 14
+bytes of Ethernet header).

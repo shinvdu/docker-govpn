@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Что такое PFS</title>
+
+<meta name="description" content="GoVPN: Что такое PFS">
+<meta name="keywords" content="GoVPN: Что такое PFS">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="ChAVO.html#g_t_0427_0410_0412_041e" rel="up" title="ЧАВО">
+<link href="Chto-takoe-anonimnostx.html#g_t_0427_0442_043e-_0442_0430_043a_043e_0435-_0430_043d_043e_043d_0438_043c_043d_043e_0441_0442_044c" rel="next" title="Что такое анонимность">
+<link href="Pochemu-net-podderzhki-proprietarnykh-OS.html#g_t_041f_043e_0447_0435_043c_0443-_043d_0435_0442-_043f_043e_0434_0434_0435_0440_0436_043a_0438-_043f_0440_043e_043f_0440_0438_0435_0442_0430_0440_043d_044b_0445-_041e_0421" rel="prev" title="Почему нет поддержки проприетарных ОС">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="g_t_0427_0442_043e-_0442_0430_043a_043e_0435-PFS"></a>
+<div class="header">
+<p>
+Next: <a href="Chto-takoe-anonimnostx.html#g_t_0427_0442_043e-_0442_0430_043a_043e_0435-_0430_043d_043e_043d_0438_043c_043d_043e_0441_0442_044c" accesskey="n" rel="next">Что такое анонимность</a>, Previous: <a href="Pochemu-net-podderzhki-proprietarnykh-OS.html#g_t_041f_043e_0447_0435_043c_0443-_043d_0435_0442-_043f_043e_0434_0434_0435_0440_0436_043a_0438-_043f_0440_043e_043f_0440_0438_0435_0442_0430_0440_043d_044b_0445-_041e_0421" accesskey="p" rel="prev">Почему нет поддержки проприетарных ОС</a>, Up: <a href="ChAVO.html#g_t_0427_0410_0412_041e" accesskey="u" rel="up">ЧАВО</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Chto-vy-podrazumevaete-pod-sovershennoi-pryamoi-sekretnostxiu_003f"></a>
+<h4 class="subsection">Что вы подразумеваете под совершенной прямой секретностью?</h4>
+
+<p>Что вы не можете дешифровать ранее перехваченный трафик если ваши
+долгоживущие ключи будут скомпрометированы. Это свойство работает на
+уровне сессии: оно не спасёт если сессионный ключ скомпрометирован из
+памяти.
+</p>
+
+
+
+</body>
+</html>

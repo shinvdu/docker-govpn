@@ -1,0 +1,28 @@
+@startuml
+hide footbox
+participant Client
+participant Server
+
+== Preparation ==
+Client -> Client : R=rand(64bit)
+Client -> Client : CDHPriv=rand(256bit)
+
+== Interaction ==
+Client -> Server : R, enc(H(DSAPub), R, El(CDHPub))
+Server -> Server : SDHPriv=rand(256bit)
+Server -> Server : K=H(DH(SDHPriv, CDHPub))
+Server -> Server : RS=rand(64bit)
+Server -> Server : SS=rand(256bit)
+Server -> Client : enc(H(DSAPub), R+1, El(SDHPub)); enc(K, R, RS+SS)
+Client -> Client : K=H(DH(CDHPriv, SDHPub))
+Client -> Client : RC=rand(64bit); SC=rand(256bit)
+Client -> Server : enc(K, R+1, RS+RC+SC+Sign(DSAPriv, K))
+Server -> Server : compare(RS)
+Server -> Server : Verify(DSAPub, Sign(DSAPriv, K), K)
+Server -> Client : enc(K, R+2, RC)
+
+== Finalizing ==
+Client -> Client : compare(RC)
+Client -> Client : MasterKey=SS XOR SC
+Server -> Server : MasterKey=SS XOR SC
+@enduml

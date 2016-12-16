@@ -1,0 +1,18 @@
+@node Timeout
+@subsection Timeout
+
+Because of stateless UDP nature there is no way to reliably know if
+remote peer is alive. That is why timeouts are necessary. If no packets
+are sent during timeout period, then remote peer is considered to be
+dead. Timeout option should be synchronized both for server and client.
+
+If there were no packets at all during fourth part of timeout, then
+special heartbeat packet is sent. So VPN connection should be alive all
+the time, even if there is no traffic in corresponding TAP interfaces.
+@strong{Beware}: this consumes traffic.
+
+Stale peers and handshake states are cleaned up every timeout period.
+
+This applies to TCP connections too: relatively much time can pass until
+we understand that remote TCP peer is suddenly died and did not
+normally terminate connection.

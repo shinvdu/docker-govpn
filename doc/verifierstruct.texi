@@ -1,0 +1,22 @@
+@node Verifier structure
+@section Verifier structure
+
+Verifier is a derivative of the password. It is resistant to
+dictionary attacks and can not be used for authentication (only
+its verifying).
+
+@verbatim
+SOURCE = Argon2d(m, t, p, SALT=PeerId, PASSWORD)
+PUB, PRIV = Ed25519.Generate(SOURCE)
+@end verbatim
+
+Verifier is serialized representation of public data above:
+@verbatim
+$argon2d$m=m,t=t,p=p$Base64(SALT)$Base64(PUB)
+@end verbatim
+
+m, t and p parameters are Argon2d-specific: memory, iterations and
+parallelizm parameters.
+
+Server stores and knows only verifier. Client can compute the whole
+keypair every time he makes handshake.

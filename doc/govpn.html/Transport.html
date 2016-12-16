@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Transport</title>
+
+<meta name="description" content="GoVPN: Transport">
+<meta name="keywords" content="GoVPN: Transport">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Developer.html#Developer" rel="up" title="Developer">
+<link href="Handshake.html#Handshake" rel="next" title="Handshake">
+<link href="Verifier-structure.html#Verifier-structure" rel="prev" title="Verifier structure">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Transport"></a>
+<div class="header">
+<p>
+Next: <a href="Handshake.html#Handshake" accesskey="n" rel="next">Handshake</a>, Previous: <a href="Verifier-structure.html#Verifier-structure" accesskey="p" rel="prev">Verifier structure</a>, Up: <a href="Developer.html#Developer" accesskey="u" rel="up">Developer</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Transport-protocol"></a>
+<h3 class="section">Transport protocol</h3>
+
+<pre class="verbatim">TAG || ENCRYPTED || NONCE --&gt; PACKET
+ ^         ^          ^
+ |         |          |
+ |         |          +-------------+
+ |         |                        |
+ |         +-------------+          |
+ |                       |          |
+ +--&lt; AUTH(AUTH_KEY, ENCRYPTED || NONCE)
+                         ^          ^
+                         |          |
++------------------------+          |
+|                                   |
+|                   +---------------+
+|                   |
++--&lt; ENCRYPT(KEY, NONCE, PAYLOAD)
+                    ^       ^
+                    |       |
+                    |       +--&lt; DATA || PAD [|| ZEROS]
+                    |
+                    +--&lt; PRP(PRP_KEY, SERIAL)
+</pre>
+<p><code>SERIAL</code> is message&rsquo;s serial number. Odds are reserved for
+client (to server) messages, evens for server (to client) messages.
+</p>
+<p><code>PRP</code> is XTEA block cipher algorithm used here as PRP (pseudo
+random permutation function) to obfuscate <code>SERIAL</code>. Plaintext
+<code>SERIAL</code> state is kept in peers internal state, but encrypted
+before transmission.
+</p>
+<p>XTEA&rsquo;s encryption key <code>PRP_KEY</code> is the first 128-bit of Salsa20&rsquo;s
+output with established common key and zero nonce (message nonces start
+from 1).
+</p>
+<pre class="verbatim">PRP_KEY = 128bit(ENCRYPT(KEY, 0))
+</pre>
+<p><code>ENCRYPT</code> is Salsa20 stream cipher, with established session
+<code>KEY</code> and obfuscated <code>SERIAL</code> used as a nonce. 512 bit of
+Salsa20&rsquo;s output is ignored and only remaining is XORed with ther data,
+encrypting it.
+</p>
+<p><code>DATA</code> is padded with <code>PAD</code> (0x80 byte). Optional <code>ZEROS</code>
+may follow, to fill up packet to conceal payload packet length.
+</p>
+<p><code>AUTH</code> is Poly1305 authentication function. First 256 bits of
+Salsa20&rsquo;s output are used as a one-time key for <code>AUTH</code>.
+</p>
+<pre class="verbatim">AUTH_KEY = 256bit(ENCRYPT(KEY, NONCE))
+</pre>
+<p>To prevent replay attacks we must remember received <code>SERIAL</code>s and
+drop when receiving duplicate ones.
+</p>
+<p>In <a href="Encless.html#Encless">encryptionless mode</a> this scheme is slightly different:
+</p>
+<pre class="verbatim"> PACKET = ENCODED || NONCE
+ENCODED = ENCLESS(DATA || PAD || ZEROS)
+  NONCE = PRP(PRP_KEY, SERIAL)
+</pre>
+<p><code>ENCLESS</code> is AONT and chaffing function. There is no need in
+explicit separate authentication.
+</p>
+
+
+</body>
+</html>

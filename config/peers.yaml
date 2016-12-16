@@ -1,0 +1,4 @@
+Govpn::
+    up: /etc/govpn/govpn_up.sh
+    iface: tap10
+    verifier: $argon2d$m=4096,t=128,p=1$B4GsJkH/T+BG0/iOUkkt/w$GOEZuuAuucwIIX8zKUzYPeVdQxJpudO3jB1rv1rjztk

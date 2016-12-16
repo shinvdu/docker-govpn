@@ -1,0 +1,95 @@
+@node Example
+@section Example usage
+
+Let's assume that there is some insecure link between your computer and
+WiFi-reachable gateway.
+
+@itemize
+@item You have got @code{wlan0} NIC with 192.168.0/24 network on it.
+@item You want to create virtual encrypted and authenticated 172.16.0/24
+network and use it as a default transport.
+@item Assume that outgoing GoVPN packets can be fragmented, so we do not
+bother configuring MTU of TAP interfaces. For better performance just
+lower it and check that no fragmentation of outgoing UDP packets occurs.
+@end itemize
+
+@strong{Install}. At first you must @ref{Installation, install} this
+software: download, @ref{Integrity, check the signature}, compile.
+
+@strong{Prepare the client}. Generate client's verifier for Alice as an
+example:
+
+
+@verbatim
+client% ./utils/newclient.sh Alice
+Passphrase:
+Your client verifier is: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg
+
+Place the following YAML configuration entry on the server's side:
+
+    Alice:
+        up: /path/to/up.sh
+        iface: or TAP interface name
+        verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+@end verbatim
+
+@strong{Prepare the server}. Add this entry to @file{peers.yaml}
+configuration file:
+
+@verbatim
+Alice:
+    iface: tap10
+    verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+@end verbatim
+
+@strong{Prepare network on GNU/Linux IPv4 server}:
+
+@verbatim
+server% ip addr add 192.168.0.1/24 dev wlan0
+server% ip tuntap add dev tap10 mode tap
+server% ip addr add 172.16.0.1/24 dev tap10
+server% ip link set up dev tap10
+@end verbatim
+
+@strong{Run server daemon itself}:
+
+@verbatim
+server% govpn-server -bind 192.168.0.1:1194
+@end verbatim
+
+@strong{Prepare network on GNU/Linux IPv4 client}:
+
+@verbatim
+client% ip addr add 192.168.0.2/24 dev wlan0
+client% ip tuntap add dev tap10 mode tap
+client% ip addr add 172.16.0.2/24 dev tap10
+client% ip link set up dev tap10
+client% ip route add 0/1 via 172.16.0.1
+client% ip route add 128/1 via 172.16.0.1
+@end verbatim
+
+@strong{Run client daemon itself}:
+@verbatim
+client% govpn-client \
+    -verifier '$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg' \
+    -iface tap10 \
+    -remote 192.168.0.1:1194
+@end verbatim
+
+@strong{FreeBSD IPv6 similar client-server example}:
+
+@verbatim
+server% ifconfig em0 inet6 fe80::1/64
+server% govpn-server -bind "fe80::1%em0"
+@end verbatim
+
+@verbatim
+client% ifconfig me0 inet6 -ifdisabled auto_linklocal
+client% ifconfig tap10
+client% ifconfig tap10 inet6 fc00::2/96 up
+client% route -6 add default fc00::1
+client% govpn-client \
+    -verifier '$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg' \
+    -iface tap10 \
+    -remote "[fe80::1%me0]":1194
+@end verbatim

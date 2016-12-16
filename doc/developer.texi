@@ -1,0 +1,49 @@
+@node Developer
+@unnumbered Developer manual
+
+Pay attention how to get @ref{Sources, development source code}.
+
+@table @asis
+@item Nonce and identity encryption
+    @url{http://www.cix.co.uk/~klockstone/xtea.pdf, XTEA}.
+@item Data encryption
+    @url{http://cr.yp.to/snuffle.html, Salsa20}.
+@item Message authentication
+    @url{http://cr.yp.to/mac.html, Poly1305}.
+@item Password authenticated key agreement
+    DH-A-EKE powered by @url{http://cr.yp.to/ecdh.html, Curve25519}
+    and @url{http://ed25519.cr.yp.to/, Ed25519}.
+@item DH elliptic-curve point encoding for public keys
+    @url{http://elligator.cr.yp.to/, Elligator}.
+@item Verifier password hashing algorithm
+    @url{https://password-hashing.net/#argon2, Argon2d}.
+@item Encryptionless confidentiality preserving encoding
+    @url{http://people.csail.mit.edu/rivest/chaffing-980701.txt,
+    Chaffing-and-Winnowing} (two Poly1305 MACs for each bit of message)
+    over 128 bits of
+    @url{http://theory.lcs.mit.edu/~cis/pubs/rivest/fusion.ps,
+    All-Or-Nothing-Transformed} (based on
+    @url{http://cseweb.ucsd.edu/~mihir/papers/oaep.html, OAEP} using
+    Salsa20 with @url{https://blake2.net/, BLAKE2b-256} based
+    @url{http://crypto.stanford.edu/~dabo/abstracts/saep.html, SAEP+}
+    checksums) data with 128-bits of feeded random.
+@item Packet overhead
+    25 bytes per packet. Plus 4128 bytes and noise in encryptionless mode.
+@item Handshake overhead
+    4 UDP (2 from client, 2 from server) packets (round-trips for TCP).
+    264 bytes total payload, 20680 in encryptionless mode.
+@item Entropy required
+    832 bits in average on client, 832 bits in average on server side
+    per handshake. 128 bits for each outgoing packet in encryptionless
+    mode.
+@end table
+
+@menu
+* Verifier structure::
+* Transport protocol: Transport.
+* Handshake protocol: Handshake.
+@end menu
+
+@include verifierstruct.texi
+@include transport.texi
+@include handshake.texi

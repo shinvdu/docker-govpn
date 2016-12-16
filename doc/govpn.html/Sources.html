@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Sources</title>
+
+<meta name="description" content="GoVPN: Sources">
+<meta name="keywords" content="GoVPN: Sources">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Installation.html#Installation" rel="up" title="Installation">
+<link href="Precautions.html#Precautions" rel="next" title="Precautions">
+<link href="Integrity.html#Integrity" rel="prev" title="Integrity">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Sources"></a>
+<div class="header">
+<p>
+Previous: <a href="Integrity.html#Integrity" accesskey="p" rel="prev">Integrity</a>, Up: <a href="Installation.html#Installation" accesskey="u" rel="up">Installation</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Development-source-code"></a>
+<h3 class="section">Development source code</h3>
+
+<p>Development source code contains the latest version of the code. It may
+be buggy. It does not contain compiled documentation and dependent
+libraries source code. Because of that, it is not recommended for
+porters: use <a href="Tarballs.html#Tarballs">Tarballs</a> instead.
+</p>
+<p>You can obtain it by cloning <a href="http://git-scm.com/">Git</a>
+<a href="http://git.cypherpunks.ru/cgit.cgi/govpn.git/log/">repository</a>
+and fetching dependent libraries source code as git submodules:
+</p>
+<pre class="verbatim">% git clone git://git.cypherpunks.ru/govpn.git govpn
+% cd govpn
+% git checkout develop
+% git submodule update --init
+</pre>
+<p>Also there is mirror of dependent libraries for safety if their native
+repositories will be unavailable (they are seldom updated):
+</p>
+<table>
+<thead><tr><th width="50%">Software/library</th><th width="50%">Mirror</th></tr></thead>
+<tr><td width="50%"><code>cypherpunks.ru/govpn</code></td><td width="50%"><a href="https://github.com/stargrave/govpn.git">https://github.com/stargrave/govpn.git</a></td></tr>
+<tr><td width="50%"><code>github.com/agl/ed25519</code></td><td width="50%"><a href="git://git.cypherpunks.ru/ed25519.git">git://git.cypherpunks.ru/ed25519.git</a></td></tr>
+<tr><td width="50%"><code>github.com/bigeagle/water</code></td><td width="50%"><a href="git://git.cypherpunks.ru/water.git">git://git.cypherpunks.ru/water.git</a></td></tr>
+<tr><td width="50%"><code>github.com/dchest/blake2b</code></td><td width="50%"><a href="git://git.cypherpunks.ru/blake2b.git">git://git.cypherpunks.ru/blake2b.git</a></td></tr>
+<tr><td width="50%"><code>github.com/go-yaml/yaml</code></td><td width="50%"><a href="git://git.cypherpunks.ru/yaml.git">git://git.cypherpunks.ru/yaml.git</a></td></tr>
+<tr><td width="50%"><code>github.com/magical/argon2</code></td><td width="50%"><a href="git://git.cypherpunks.ru/argon2.git">git://git.cypherpunks.ru/argon2.git</a></td></tr>
+<tr><td width="50%"><code>golang.org/x/crypto</code></td><td width="50%"><a href="git://git.cypherpunks.ru/crypto.git">git://git.cypherpunks.ru/crypto.git</a></td></tr>
+</table>
+
+
+
+</body>
+</html>

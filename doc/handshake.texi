@@ -1,0 +1,99 @@
+@node Handshake
+@section Handshake protocol
+
+@verbatiminclude handshake.utxt
+
+Each handshake message ends with so called @code{IDtag}: it is an XTEA
+encrypted first 64 bits of each message with client's @ref{Identity} as
+a key. It is used to transmit identity and to mark packet as handshake
+message.
+
+If @ref{Noise, noise} is enabled, then data is padded to fill up packet
+to MTU's size.
+
+@strong{Preparation stage}:
+
+@enumerate
+@item
+Client knows only his identity and passphrase written somewhere in the
+human readable form. Server knows his identity and
+@ref{Verifier structure, verifier}: @code{DSAPub}.
+@item
+Client computes verifier which produces @code{DSAPriv} and
+@code{DSAPub}. @code{H()} is @emph{BLAKE2b-256} hash function.
+@item
+Client generates DH keypair: @code{CDHPub} and @code{CDHPriv}.
+Also it generates random 64-bit @code{R} that is used as a nonce for
+symmetric encryption. @code{El()} is Elligator point encoding (and vice
+versa) algorithm.
+@end enumerate
+
+@strong{Interaction stage}:
+
+@enumerate
+@item
+@verb{|R + enc(H(DSAPub), R, El(CDHPub)) + IDtag -> Server|} [48 bytes]
+
+@item
+@itemize
+@item Server remembers client address.
+@item Decrypts @code{El(CDHPub)}.
+@item Inverts @code{El()} encoding and gets @code{CDHPub}.
+@item Generates DH keypair: @code{SDHPriv}/@code{SDHPub}.
+@item Computes common shared key @code{K = H(DH(SDHPriv, CDHPub))}.
+@item Generates 64-bit random number @code{RS}.
+@item Generates 256-bit pre-master secret @code{SS}.
+@end itemize
+
+@item
+@verb{|enc(H(DSAPub), R+1, El(SDHPub)) + enc(K, R, RS + SS) + IDtag -> Client|} [80 bytes]
+
+@item
+@itemize
+@item Client decrypts @code{El(SDHPub)}.
+@item Inverts @code{El()} encoding and gets @code{SDHPub}.
+@item Computes @code{K}.
+@item Decrypts @code{RS} and @code{SS}.
+@item Remembers @code{SS}.
+@item Generates 64-bit random number @code{RC}.
+@item Generates 256-bit pre-master secret @code{SC}.
+@item Signs with @code{DSAPriv} key @code{K}.
+@end itemize
+
+@item
+@verb{|enc(K, R+1, RS + RC + SC + Sign(DSAPriv, K)) + IDtag -> Server|} [120 bytes]
+
+@item
+@itemize
+    @item Server decrypts @code{RS}, @code{RC}, @code{SC},
+    @code{Sign(DSAPriv, K)}.
+
+    @item Compares @code{RS} with its own one sent before. Server
+    decrypts @code{RS}, @code{RC}, @code{SC} with key @code{K}, compares
+    @code{RS} with its own one sent before.
+
+    @item Verifies @code{K} signature with verifier @code{DSAPub}.
+
+    @item Computes final session encryption key:
+    @code{MasterKey=SS XOR SC}.
+@end itemize
+
+@item
+@verb{|ENC(K, R+2, RC) + IDtag -> Client|} [16 bytes]
+
+@item
+@itemize
+@item Client decrypts @code{RC}
+@item Compares with its own one sent before.
+@item Computes final session encryption key as server did.
+@end itemize
+
+@end enumerate
+
+@code{MasterKey} is high entropy 256-bit key. @code{K} DH-derived one
+has 128-bit security margin and that is why are not in use except in
+handshake process. @code{R*} are required for handshake randomization
+and two-way authentication.
+
+In @ref{Encless, encryptionless mode} each @code{enc()} is replaced with
+AONT and chaffing function over the noised data.

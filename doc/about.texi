@@ -1,0 +1,95 @@
+GoVPN is simple free software virtual private network daemon,
+aimed to be reviewable, secure and
+@url{https://en.wikipedia.org/wiki/Deep_packet_inspection, DPI}/censorship-resistant.
+
+See also this page @ref{О демоне, on russian}.
+
+@itemize
+
+@item
+@url{https://www.gnu.org/philosophy/pragmatic.html, Copylefted}
+@url{https://www.gnu.org/philosophy/free-sw.html, free software}:
+licenced under @url{https://www.gnu.org/licenses/gpl-3.0.html, GPLv3+}.
+
+@item
+Fast strong @ref{PAKE, passphrase authenticated} augmented
+@ref{Handshake, key agreement protocol} with zero-knowledge mutual peers
+authentication (PAKE DH A-EKE (Diffie-Hellman Augmented Encrypted Key
+Exchange)).
+
+@item
+@ref{Verifier structure, Augmented authentication tokens} resistant to
+offline dictionary attacks. They use CPU and memory hardened hashing
+algorithm. An attacker can not masquerade a client even with server
+passphrase verifiers compromising.
+
+@item
+Encrypted and authenticated @ref{Transport, payload transport}
+with 128-bit @ref{Developer, security margin} state-of-the-art
+cryptography.
+
+@item
+Optional @ref{Encless, encryptionless mode} of operation: no encryption
+functions are applied for outgoing traffic, but still confidentiality
+preserving encoding. Jurisdictions and courts can not either force you
+to reveal encryption keys or sue for encryption usage.
+
+@item
+Censorship resistant handshake and transport messages: fully
+indistinguishable from the noise with optionally hidden packets length.
+
+@item
+@url{https://en.wikipedia.org/wiki/Forward_secrecy, Perfect forward secrecy}
+property.
+
+@item
+Replay attack protection (using one-time MACs and optional
+@ref{Timesync, time synchronization} requirement).
+
+@item
+Built-in rehandshake (session key rotation) and heartbeat features.
+
+@item
+Ability to hide packets length with the @ref{Noise, noise} data.
+
+@item
+Ability to hide payload timestamps with @ref{CPR, constant packet rate}
+traffic.
+
+@item
+Compatible with @url{http://egd.sourceforge.net/, EGD} (entropy
+gathering daemon) PRNGs.
+
+@item
+Several simultaneous clients support with per-client configuration
+options. Clients have pre-established @ref{Identity, identity} invisible
+for third-parties (they are anonymous).
+
+@item
+Uses @url{https://en.wikipedia.org/wiki/TAP_(network_driver), TAP}
+underlying network interfaces.
+
+@item
+Can use @ref{Network, UDP and TCP} or HTTP @ref{Proxy, proxies}
+for accessing the server.
+
+@item
+Fully IPv4 and IPv6 compatible.
+
+@item
+Optional built-in HTTP-server for retrieving real-time
+@ref{Stats, statistics} information about known connected peers in
+@url{http://json.org/, JSON} format.
+
+@item
+Server is configured through the @url{http://yaml.org/, YAML} file.
+
+@item
+Written on @url{https://golang.org/, Go} programming language with
+simple code that can be read and reviewed.
+
+@item
+@url{https://www.gnu.org/, GNU}/Linux and
+@url{https://www.freebsd.org/, FreeBSD} support.
+
+@end itemize

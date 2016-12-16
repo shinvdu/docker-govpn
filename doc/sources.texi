@@ -1,0 +1,32 @@
+@node Sources
+@section Development source code
+
+Development source code contains the latest version of the code. It may
+be buggy. It does not contain compiled documentation and dependent
+libraries source code. Because of that, it is not recommended for
+porters: use @ref{Tarballs} instead.
+
+You can obtain it by cloning @url{http://git-scm.com/, Git}
+@url{http://git.cypherpunks.ru/cgit.cgi/govpn.git/log/, repository}
+and fetching dependent libraries source code as git submodules:
+
+@verbatim
+% git clone git://git.cypherpunks.ru/govpn.git govpn
+% cd govpn
+% git checkout develop
+% git submodule update --init
+@end verbatim
+
+Also there is mirror of dependent libraries for safety if their native
+repositories will be unavailable (they are seldom updated):
+
+@multitable @columnfractions .50 .50
+@headitem Software/library @tab Mirror
+@item @code{cypherpunks.ru/govpn} @tab @url{https://github.com/stargrave/govpn.git}
+@item @code{github.com/agl/ed25519} @tab @url{git://git.cypherpunks.ru/ed25519.git}
+@item @code{github.com/bigeagle/water} @tab @url{git://git.cypherpunks.ru/water.git}
+@item @code{github.com/dchest/blake2b} @tab @url{git://git.cypherpunks.ru/blake2b.git}
+@item @code{github.com/go-yaml/yaml} @tab @url{git://git.cypherpunks.ru/yaml.git}
+@item @code{github.com/magical/argon2} @tab @url{git://git.cypherpunks.ru/argon2.git}
+@item @code{golang.org/x/crypto} @tab @url{git://git.cypherpunks.ru/crypto.git}
+@end multitable

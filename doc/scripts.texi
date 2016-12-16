@@ -1,0 +1,17 @@
+@node Scripts
+@subsection Scripts
+
+Up- and down- scripts used as a hook executed when connection is either
+established or lost. Following environment variables are set during
+their execution:
+
+@table @code
+
+@item GOVPN_REMOTE
+Remote peer's address. In client mode it is server's address.
+
+@item GOVPN_IFACE
+TAP interface name. In server mode this can be empty: that means that
+script must output its name as the first line to stdout.
+
+@end table

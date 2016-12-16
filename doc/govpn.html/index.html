@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Top</title>
+
+<meta name="description" content="GoVPN: Top">
+<meta name="keywords" content="GoVPN: Top">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="#Top" rel="start" title="Top">
+<link href="../dir/index.html" rel="up" title="(dir)">
+<link href="FAQ.html#FAQ" rel="next" title="FAQ">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+
+
+<a name="Top"></a>
+<div class="header">
+<p>
+Next: <a href="FAQ.html#FAQ" accesskey="n" rel="next">FAQ</a>, Up: <a href="../dir/index.html" accesskey="u" rel="up">(dir)</a> &nbsp; </p>
+</div>
+<hr>
+<a name="GoVPN"></a>
+<h1 class="top">GoVPN</h1>
+
+<p>GoVPN is simple free software virtual private network daemon,
+aimed to be reviewable, secure and
+<a href="https://en.wikipedia.org/wiki/Deep_packet_inspection">DPI</a>/censorship-resistant.
+</p>
+<p>See also this page <a href="O-demone.html#g_t_041e-_0434_0435_043c_043e_043d_0435">on russian</a>.
+</p>
+<ul>
+<li> <a href="https://www.gnu.org/philosophy/pragmatic.html">Copylefted</a>
+<a href="https://www.gnu.org/philosophy/free-sw.html">free software</a>:
+licenced under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPLv3+</a>.
+
+</li><li> Fast strong <a href="PAKE.html#PAKE">passphrase authenticated</a> augmented
+<a href="Handshake.html#Handshake">key agreement protocol</a> with zero-knowledge mutual peers
+authentication (PAKE DH A-EKE (Diffie-Hellman Augmented Encrypted Key
+Exchange)).
+
+</li><li> <a href="Verifier-structure.html#Verifier-structure">Augmented authentication tokens</a> resistant to
+offline dictionary attacks. They use CPU and memory hardened hashing
+algorithm. An attacker can not masquerade a client even with server
+passphrase verifiers compromising.
+
+</li><li> Encrypted and authenticated <a href="Transport.html#Transport">payload transport</a>
+with 128-bit <a href="Developer.html#Developer">security margin</a> state-of-the-art
+cryptography.
+
+</li><li> Optional <a href="Encless.html#Encless">encryptionless mode</a> of operation: no encryption
+functions are applied for outgoing traffic, but still confidentiality
+preserving encoding. Jurisdictions and courts can not either force you
+to reveal encryption keys or sue for encryption usage.
+
+</li><li> Censorship resistant handshake and transport messages: fully
+indistinguishable from the noise with optionally hidden packets length.
+
+</li><li> <a href="https://en.wikipedia.org/wiki/Forward_secrecy">Perfect forward secrecy</a>
+property.
+
+</li><li> Replay attack protection (using one-time MACs and optional
+<a href="Timesync.html#Timesync">time synchronization</a> requirement).
+
+</li><li> Built-in rehandshake (session key rotation) and heartbeat features.
+
+</li><li> Ability to hide packets length with the <a href="Noise.html#Noise">noise</a> data.
+
+</li><li> Ability to hide payload timestamps with <a href="CPR.html#CPR">constant packet rate</a>
+traffic.
+
+</li><li> Compatible with <a href="http://egd.sourceforge.net/">EGD</a> (entropy
+gathering daemon) PRNGs.
+
+</li><li> Several simultaneous clients support with per-client configuration
+options. Clients have pre-established <a href="Identity.html#Identity">identity</a> invisible
+for third-parties (they are anonymous).
+
+</li><li> Uses <a href="https://en.wikipedia.org/wiki/TAP_(network_driver)">TAP</a>
+underlying network interfaces.
+
+</li><li> Can use <a href="Network.html#Network">UDP and TCP</a> or HTTP <a href="Proxy.html#Proxy">proxies</a>
+for accessing the server.
+
+</li><li> Fully IPv4 and IPv6 compatible.
+
+</li><li> Optional built-in HTTP-server for retrieving real-time
+<a href="Stats.html#Stats">statistics</a> information about known connected peers in
+<a href="http://json.org/">JSON</a> format.
+
+</li><li> Server is configured through the <a href="http://yaml.org/">YAML</a> file.
+
+</li><li> Written on <a href="https://golang.org/">Go</a> programming language with
+simple code that can be read and reviewed.
+
+</li><li> <a href="https://www.gnu.org/">GNU</a>/Linux and
+<a href="https://www.freebsd.org/">FreeBSD</a> support.
+
+</li></ul>
+
+<div align="center"><a href="Tarballs.html#Tarballs"><strong>Download it</strong></a>.
+</div>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="FAQ.html#FAQ" accesskey="1">Frequently Asked Questions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="News.html#News" accesskey="2">News</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Russkii.html#g_t_0420_0443_0441_0441_043a_0438_0439" accesskey="3">Информация на русском</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Installation.html#Installation" accesskey="4">Installation</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Precautions.html#Precautions" accesskey="5">Precautions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="User.html#User" accesskey="6">User manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Developer.html#Developer" accesskey="7">Developer manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Contacts.html#Contacts" accesskey="8">Contacts and feedback</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Thanks.html#Thanks" accesskey="9">Thanks</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Media.html#Media">In the media</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Copying-conditions.html#Copying-conditions">Copying conditions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<div class="header">
+<p>
+Next: <a href="FAQ.html#FAQ" accesskey="n" rel="next">FAQ</a>, Up: <a href="../dir/index.html" accesskey="u" rel="up">(dir)</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

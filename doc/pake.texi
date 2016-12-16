@@ -1,0 +1,22 @@
+@node PAKE
+@subsection Password Authenticated Key Agreement
+
+GoVPN uses strong password authentication. That means that it uses human
+memorable @strong{passphrases}, instead of some small high-entropy keys
+that must be carried with himself. Passphrases differ from passwords:
+they are long string of low-entropy characters -- they are easy to
+remember and can have high overall entropy.
+
+Strong zero-knowledge authentication means that:
+
+@itemize
+@item compromising of passphrase files on either server or client sides
+won't allow attackers to masquerade himself the client;
+@item no need of protected secure storage on the server's side to keep
+keys in safety.
+@end itemize
+
+Passphrases are entered directly by the human on the client side. Server
+side stores pre-shared @ref{Verifier, verifier}, containing dictionary
+attack resistant passphrase derivative. Attacker can not use it to act
+as a client.

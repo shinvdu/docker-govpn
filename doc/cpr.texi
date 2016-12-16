@@ -1,0 +1,10 @@
+@node CPR
+@subsection Constant Packet Rate
+
+Constant Packet Rate is used to hide fact of underlying payload packets
+appearance. In this mode daemon inserts necessary dummy packets and
+delays other ones.
+
+This mode is turned by @option{-cpr} option, where you specify desired
+outgoing traffic rate in KiB/sec (kibibytes per second). This option also
+@strong{forces} using of the @ref{Noise, noise}! It is turned off by default.

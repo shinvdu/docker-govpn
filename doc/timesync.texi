@@ -1,0 +1,19 @@
+@node Timesync
+@subsection Time synchronization
+
+DPI systems can be active. They could intercept first (assuming
+handshake) packets and repeat them again sooner. Without the correct
+PRP-authentication, server won't answer them, but repeated ones are
+still valid. In that case DPI will get the answer from the server,
+probably without noise padding and understand that it is GoVPN server's
+handshake packet.
+
+Time synchronization requirement could be used for preventing this.
+Client and server clocks must be synced together more or less. You
+enable it by specifying @option{-timesync} option with allowable time
+accuracy (time window width) in seconds.
+
+Each handshake's packet PRP authentication just XORed with current
+timestamp rounded to @option{timesync} number of seconds. Timesync option
+is higher: less clock synchronization accuracy required, but bigger time
+window of possible packet repeating.

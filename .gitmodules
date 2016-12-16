@@ -1,0 +1,18 @@
+[submodule "src/github.com/bigeagle/water"]
+	path = src/github.com/bigeagle/water
+	url = https://github.com/bigeagle/water.git
+[submodule "src/github.com/agl/ed25519"]
+	path = src/github.com/agl/ed25519
+	url = https://github.com/agl/ed25519.git
+[submodule "src/golang.org/x/crypto"]
+	path = src/golang.org/x/crypto
+	url = https://go.googlesource.com/crypto
+[submodule "src/github.com/magical/argon2"]
+	path = src/github.com/magical/argon2
+	url = https://github.com/magical/argon2.git
+[submodule "src/github.com/dchest/blake2b"]
+	path = src/github.com/dchest/blake2b
+	url = https://github.com/dchest/blake2b.git
+[submodule "src/github.com/go-yaml/yaml"]
+	path = src/github.com/go-yaml/yaml
+	url = https://github.com/go-yaml/yaml.git

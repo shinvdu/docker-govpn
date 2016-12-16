@@ -1,0 +1,87 @@
+@node Server
+@section Server part
+
+Except for common @ref{Stats, -stats}, @ref{EGD, -egd} options client
+has the following ones:
+
+@table @option
+
+@item -proto
+@ref{Network, Network protocol} to use. Can be @emph{udp} (default),
+@emph{tcp} or @emph{all}.
+
+@item -bind
+Address (@code{host:port} format) we must bind to.
+
+@item -conf
+Path to YAML file with the configuration.
+
+@item -proxy
+Start trivial HTTP @ref{Proxy} server on specified @emph{host:port}.
+
+@end table
+
+Configuration file is YAML file with following example structure:
+
+@verbatim
+stargrave: {                        <-- Peer human readable name
+    iface: tap10                    <-- OPTIONAL TAP interface name
+    mtu: 1514                       <-- OPTIONAL overriden MTU
+    up: ./stargrave-up.sh           <-- OPTIONAL up-script
+    down: ./stargrave-down.sh       <-- OPTIONAL down-script
+    timeout: 60                     <-- OPTIONAL overriden timeout
+    timesync: 0                     <-- OPTIONAL time synchronization requirement
+    noise: No                       <-- OPTIONAL noise enabler
+    cpr: 64                         <-- OPTIONAL constant packet rate, KiB/sec
+    encless: No                     <-- OPTIONAL Encryptionless mode
+    verifier: $argon2d...           <-- verifier received from client
+[...]
+@end verbatim
+
+At least one of either @code{iface} or @code{up} must be specified. If
+you specify @code{iface}, then it will be forcefully used to determine
+what TAP interface will be used. If it is not specified, then
+up-@ref{Scripts, script} must output interface's name to stdout
+(first output line).
+
+For example up-script can be just @code{echo tap10}, or more advanced
+like the following one:
+
+@verbatim
+#!/bin/sh
+$tap=$(ifconfig tap create)
+ifconfig $tap inet6 fc00::1/96 mtu 1412 up
+echo $tap
+@end verbatim
+
+Each minute server rereads and refreshes peers configuration and adds
+newly appeared identities, deletes an obsolete ones.
+
+You can use convenient @command{utils/newclient.sh} script for new client
+creation:
+
+@verbatim
+% ./utils/newclient.sh Alice
+[...]
+Your client verifier is: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg
+
+Place the following YAML configuration entry on the server's side:
+
+    Alice:
+        up: /path/to/up.sh
+        iface: or TAP interface name
+        verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+@end verbatim
+
+Example configuration file:
+@verbatim
+stargrave:
+    iface: tap0
+    verifier: $argon2d$m=4096,t=128,p=1$VMirzcshcHuG2V4jhUsEjw$X5fC07L8k61h3S1Oro/rC76+m0oGDTA9Bq+aWJ1uOgY
+slow:
+    iface: tap1
+    encless: Yes
+    mtu: 9000
+    cpr: 384
+    verifier: $argon2d$m=4096,t=128,p=1$YbIA5garDqCOhtI/2EZVNg$gOo5vcEGynmpeepNscwclicfZsWxzgYFRLbgG21EZ1U
+@end verbatim

@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Client</title>
+
+<meta name="description" content="GoVPN: Client">
+<meta name="keywords" content="GoVPN: Client">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="User.html#User" rel="up" title="User">
+<link href="Server.html#Server" rel="next" title="Server">
+<link href="Verifier.html#Verifier" rel="prev" title="Verifier">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Client"></a>
+<div class="header">
+<p>
+Next: <a href="Server.html#Server" accesskey="n" rel="next">Server</a>, Previous: <a href="Glossary.html#Glossary" accesskey="p" rel="prev">Glossary</a>, Up: <a href="User.html#User" accesskey="u" rel="up">User</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Client-part"></a>
+<h3 class="section">Client part</h3>
+
+<p>Except for common <a href="Stats.html#Stats">-stats</a>, <a href="EGD.html#EGD">-egd</a> options client
+has the following ones:
+</p>
+<dl compact="compact">
+<dt><samp>-mtu</samp></dt>
+<dd><p>Expected TAP interface <a href="MTU.html#MTU">MTU</a>.
+</p>
+</dd>
+<dt><samp>-proto</samp></dt>
+<dd><p><a href="Network.html#Network">Network protocol</a> to use. Can be either <em>udp</em>
+(default) or <em>tcp</em>.
+</p>
+</dd>
+<dt><samp>-proxy</samp></dt>
+<dd><p>Use specified <em>host:port</em> <a href="Proxy.html#Proxy">Proxy</a> server for accessing remote
+server.
+</p>
+</dd>
+<dt><samp>-proxy-auth</samp></dt>
+<dd><p>Optional <em>user:password</em> for HTTP Basic authorization on proxy
+server.
+</p>
+</dd>
+<dt><samp>-remote</samp></dt>
+<dd><p>Address (<code>host:port</code> format) of remote server we need to connect to.
+</p>
+</dd>
+<dt><samp>-iface</samp></dt>
+<dd><p>TAP interface name.
+</p>
+</dd>
+<dt><samp>-verifier</samp></dt>
+<dd><p>Our client&rsquo;s <a href="Verifier.html#Verifier">Verifier</a>.
+</p>
+</dd>
+<dt><samp>-key</samp></dt>
+<dd><p>Path to the file with the passphrase. If omitted, then you will be asked
+to enter it in the terminal.
+</p>
+</dd>
+<dt><samp>-timeout</samp></dt>
+<dd><p><a href="Timeout.html#Timeout">Timeout</a> setting in seconds.
+</p>
+</dd>
+<dt><samp>-timesync</samp></dt>
+<dd><p>Optional <a href="Timesync.html#Timesync">time synchronization</a> requirement. If set to
+zero, then no synchronization required.
+</p>
+</dd>
+<dt><samp>-noise</samp></dt>
+<dd><p>Enable <a href="Noise.html#Noise">Noise</a>.
+</p>
+</dd>
+<dt><samp>-cpr</samp></dt>
+<dd><p>Set <a href="CPR.html#CPR">CPR</a> in KiB/sec.
+</p>
+</dd>
+<dt><samp>-encless</samp></dt>
+<dd><p>Enable <a href="Encless.html#Encless">encryptionless mode</a>.
+</p>
+</dd>
+<dt><samp>-up</samp></dt>
+<dd><p>Optional path to <a href="Scripts.html#Scripts">script</a> that will be executed after
+connection is established. Interface name will be given to it as a first
+argument.
+</p>
+</dd>
+<dt><samp>-down</samp></dt>
+<dd><p>Same as <samp>-up</samp> above, but it is executed when connection is lost,
+when we exit.
+</p>
+</dd>
+</dl>
+
+<p>Example up-script that calls DHCP client and IPv6 advertisement
+solicitation:
+</p>
+<pre class="verbatim">client% cat &gt; up.sh &lt;&lt;EOF
+#!/bin/sh
+dhclient $GOVPN_IFACE
+rtsol $GOVPN_IFACE
+EOF
+client% chmod +x up.sh
+</pre>
+
+
+</body>
+</html>

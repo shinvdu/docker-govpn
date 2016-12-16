@@ -1,0 +1,261 @@
+@node News
+@unnumbered News
+
+See also this page @ref{Новости, on russian}.
+
+@node Release 5.7
+@section Release 5.7
+@itemize
+@item TAP interface name and remote peer's address are passed to up- and
+down- scripts through environment variables.
+@item Update Argon2 library to use version 1.3 of the algorithm.
+@end itemize
+
+@node Release 5.6
+@section Release 5.6
+@itemize
+@item Added up/down example script for replacing default route (thanks
+to Zhuoyun Wei).
+@item Fixed documentation bug: @file{.info} was not installing.
+@end itemize
+
+@node Release 5.5
+@section Release 5.5
+@itemize
+@item Ability to work on 32-bit platforms. @emph{sync/atomic} library
+has some specific issues that caused panics on previous versions.
+@end itemize
+
+@node Release 5.4
+@section Release 5.4
+@itemize
+@item Added optional @ref{Timesync, time synchronization} requirement.
+It will add timestamps in handshake PRP authentication, disallowing to
+repeat captured packet and get reply from the server, making it visible
+to DPI.
+@end itemize
+
+@node Release 5.3
+@section Release 5.3
+@itemize
+@item Fixed minor bug with @command{newclient.sh} that caught
+"Passphrase:" prompt and inserted it into example YAML output.
+Just replaced stdout output to stderr for that prompt.
+@end itemize
+
+@node Release 5.2
+@section Release 5.2
+@itemize
+@item Ability to read passphrases directly from the terminal (user's
+input) without using of keyfiles. @command{storekey.sh} utility removed.
+@end itemize
+
+@node Release 5.1
+@section Release 5.1
+@itemize
+@item Server is configured using @url{http://yaml.org/, YAML} file. It
+is very convenient to have comments and templates, comparing to JSON.
+@item Incompatible with previous versions replacement of @emph{HSalsa20}
+with @emph{BLAKE2b} in handshake code.
+@end itemize
+
+@node Release 5.0
+@section Release 5.0
+@itemize
+@item New optional @ref{Encless, encryptionless mode} of operation.
+Technically no encryption functions are applied for outgoing packets, so
+you can not be forced to reveal your encryption keys or sued for
+encryption usage.
+@item @ref{MTU}s are configured on per-user basis.
+@item Simplified payload padding scheme, saving one byte of data.
+@item Ability to specify TAP interface name explicitly without any
+up-scripts for convenience.
+@item @command{govpn-verifier} utility also can use @ref{EGD}.
+@end itemize
+
+@node Release 4.2
+@section Release 4.2
+@itemize
+@item Fixed non-critical bug when server may fail if up-script is not
+executed successfully.
+@end itemize
+
+@node Release 4.1
+@section Release 4.1
+@itemize
+@item @url{https://password-hashing.net/#argon2, Argon2d} is used instead
+of PBKDF2 for password verifier hashing.
+@item Client's identity is stored inside the verifier, so it simplifies
+server-side configuration and the code.
+@end itemize
+
+@node Release 4.0
+@section Release 4.0
+@itemize
+@item Handshake messages can be noised: their messages lengths are
+hidden. Now they are indistinguishable from transport messages.
+@item Parallelized clients processing on the server side.
+@item Much higher overall performance.
+@item Single JSON file server configuration.
+@end itemize
+
+@node Release 3.5
+@section Release 3.5
+@itemize
+@item Ability to use @ref{Network, TCP} network transport.
+Server can listen on both UDP and TCP sockets.
+@item Ability to use @ref{Proxy, HTTP proxies} (through CONNECT method)
+for accessing the server. Server can also emulate HTTP proxy behaviour.
+@item Updated Poly1305 library with ARM-related bugfixes.
+@item Go 1.5+ version is highly recommended because of performance
+reasons.
+@end itemize
+
+@node Release 3.4
+@section Release 3.4
+@itemize
+@item Ability to use external @ref{EGD}-compatible PRNGs. Now you are
+able to use GoVPN even on systems with the bad @file{/dev/random},
+providing higher quality entropy from external sources.
+@item Removed @option{-noncediff} option. It is replaced with in-memory
+storage of seen nonces, thus eliminating possible replay attacks at all
+without performance degradation related to inbound packets reordering.
+@end itemize
+
+@node Release 3.3
+@section Release 3.3
+@itemize
+@item Compatibility with an old GNU Make 3.x. Previously only BSD Make
+and GNU Make 4.x were supported.
+@item @file{/dev/urandom} is used for correct client identity generation
+under GNU/Linux systems. Previously @file{/dev/random} can produce less
+than required 128-bits of random.
+@end itemize
+
+@node Release 3.2
+@section Release 3.2
+@itemize
+@item Deterministic building: dependent libraries source code commits
+are fixed in our makefiles.
+@item No Internet connection is needed for building the source code: all
+required libraries are included in release tarballs.
+@item FreeBSD Make compatibility. GNU Make is not necessary anymore.
+@end itemize
+
+@node Release 3.1
+@section Release 3.1
+@itemize
+@item
+Diffie-Hellman public keys are encoded with Elligator algorithm when
+sending over the wire, making them indistinguishable from the random
+strings, preventing detection of successful decryption try when guessing
+passwords (that are used to create DSA public keys). But this will
+consume twice entropy for DH key generation in average.
+@end itemize
+
+@node Release 3.0
+@section Release 3.0
+@itemize
+@item
+EKE protocol is replaced by Augmented-EKE and static symmetric (both
+sides have it) pre-shared key replaced with server-side verifier. This
+requires, 64 more bytes in handshake traffic, Ed25519 dependency with
+corresponding sign/verify computations, PBKDF2 dependency and its
+usage on the client side during handshake.
+
+A-EKE with PBKDF2-based verifiers is resistant to dictionary attacks,
+can use human memorable passphrases instead of static keys and
+server-side verifiers can not be used for authentication (compromised
+server does not leak client's authentication keys/passphrases).
+
+@item
+Changed transport message structure: added payload packet's length.
+This will increase transport overhead for two bytes, but heartbeat
+packets became smaller
+
+@item
+Ability to hide underlying packets lengths by appending noise, junk
+data during transmission. Each packet can be fill up-ed to its
+maximal MTU size.
+
+@item
+Ability to hide underlying packets appearance rate, by generating
+Constant Packet Rate traffic. This includes noise generation too.
+@item
+Per-peer @option{-timeout}, @option{-noncediff}, @option{-noise} and
+@option{-cpr} configuration options for server.
+@end itemize
+
+@node Release 2.4
+@section Release 2.4
+@itemize
+@item Added ability to optionally run built-in HTTP-server responding
+with JSON of all known connected peers information. Real-time client's
+statistics.
+@item Documentation is explicitly licenced under GNU FDL 1.3+.
+@end itemize
+
+@node Release 2.3
+@section Release 2.3
+@itemize
+@item Handshake packets became indistinguishable from the random. Now
+all GoVPN's traffic is the noise for men in the middle.
+
+@item Handshake messages are smaller (16% traffic reduce).
+
+@item Adversary now can not create malicious fake handshake packets that
+will force server to generate private DH key, preventing entropy
+consuming and resource heavy computations.
+@end itemize
+
+@node Release 2.2
+@section Release 2.2
+@itemize
+@item Fixed several possible channel deadlocks.
+@end itemize
+
+@node Release 2.1
+@section Release 2.1
+@itemize
+@item Fixed Linux-related building.
+@end itemize
+
+@node Release 2.0
+@section Release 2.0
+@itemize
+@item Added clients identification.
+@item Simultaneous several clients support by server.
+@item Per-client up/down scripts.
+@end itemize
+
+@node Release 1.5
+@section Release 1.5
+@itemize
+@item Nonce obfuscation/encryption.
+@end itemize
+
+@node Release 1.4
+@section Release 1.4
+@itemize
+@item Performance optimizations.
+@end itemize
+
+@node Release 1.3
+@section Release 1.3
+@itemize
+@item Heartbeat feature.
+@item Rehandshake feature.
+@item up- and down- optional scripts.
+@end itemize
+
+@node Release 1.1
+@section Release 1.1
+@itemize
+@item FreeBSD support.
+@end itemize
+
+@node Release 1.0
+@section Release 1.0
+@itemize
+@item Initial stable release.
+@end itemize

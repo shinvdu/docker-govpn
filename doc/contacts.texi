@@ -1,0 +1,11 @@
+@node Contacts
+@unnumbered Contacts
+
+Please send questions regarding the use of GoVPN, bug reports and patches to
+@url{https://lists.cypherpunks.ru/pipermail/govpn-devel/, govpn-devel}
+mailing list. Announcements also go to this mailing list.
+
+Official website is @url{http://www.cypherpunks.ru/govpn/}
+(with @url{http://govpn.info/} alias), also available as
+@url{https://www.torproject.org/, Tor} hidden service:
+@url{http://vabu56j2ep2rwv3b.onion/govpn/}.

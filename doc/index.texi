@@ -1,0 +1,59 @@
+\input texinfo
+@documentencoding UTF-8
+@settitle GoVPN
+
+@copying
+This manual is for GoVPN -- simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright @copyright{} 2014-2016 @email{stargrave@@stargrave.org, Sergey Matveev}
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions".
+@end quotation
+@end copying
+
+@node Top
+@top GoVPN
+
+@include about.texi
+
+@center @ref{Tarballs, @strong{Download it}}.
+
+@menu
+* Frequently Asked Questions: FAQ.
+* News::
+* Информация на русском: Русский.
+* Installation::
+* Precautions::
+* User manual: User.
+* Developer manual: Developer.
+* Contacts and feedback: Contacts.
+* Thanks::
+* In the media: Media.
+* Copying conditions::
+@end menu
+
+@include faq.texi
+@include news.texi
+@include russian.texi
+@include installation.texi
+@include precautions.texi
+@include user.texi
+@include developer.texi
+@include contacts.texi
+@include thanks.texi
+@include media.texi
+
+@node Copying conditions
+@unnumbered Copying conditions
+
+@insertcopying
+@verbatiminclude fdl.txt
+
+@bye

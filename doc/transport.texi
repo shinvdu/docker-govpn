@@ -1,0 +1,70 @@
+@node Transport
+@section Transport protocol
+
+@verbatim
+TAG || ENCRYPTED || NONCE --> PACKET
+ ^         ^          ^
+ |         |          |
+ |         |          +-------------+
+ |         |                        |
+ |         +-------------+          |
+ |                       |          |
+ +--< AUTH(AUTH_KEY, ENCRYPTED || NONCE)
+                         ^          ^
+                         |          |
++------------------------+          |
+|                                   |
+|                   +---------------+
+|                   |
++--< ENCRYPT(KEY, NONCE, PAYLOAD)
+                    ^       ^
+                    |       |
+                    |       +--< DATA || PAD [|| ZEROS]
+                    |
+                    +--< PRP(PRP_KEY, SERIAL)
+@end verbatim
+
+@code{SERIAL} is message's serial number. Odds are reserved for
+client (to server) messages, evens for server (to client) messages.
+
+@code{PRP} is XTEA block cipher algorithm used here as PRP (pseudo
+random permutation function) to obfuscate @code{SERIAL}. Plaintext
+@code{SERIAL} state is kept in peers internal state, but encrypted
+before transmission.
+
+XTEA's encryption key @code{PRP_KEY} is the first 128-bit of Salsa20's
+output with established common key and zero nonce (message nonces start
+from 1).
+
+@verbatim
+PRP_KEY = 128bit(ENCRYPT(KEY, 0))
+@end verbatim
+
+@code{ENCRYPT} is Salsa20 stream cipher, with established session
+@code{KEY} and obfuscated @code{SERIAL} used as a nonce. 512 bit of
+Salsa20's output is ignored and only remaining is XORed with ther data,
+encrypting it.
+
+@code{DATA} is padded with @code{PAD} (0x80 byte). Optional @code{ZEROS}
+may follow, to fill up packet to conceal payload packet length.
+
+@code{AUTH} is Poly1305 authentication function. First 256 bits of
+Salsa20's output are used as a one-time key for @code{AUTH}.
+
+@verbatim
+AUTH_KEY = 256bit(ENCRYPT(KEY, NONCE))
+@end verbatim
+
+To prevent replay attacks we must remember received @code{SERIAL}s and
+drop when receiving duplicate ones.
+
+In @ref{Encless, encryptionless mode} this scheme is slightly different:
+
+@verbatim
+ PACKET = ENCODED || NONCE
+ENCODED = ENCLESS(DATA || PAD || ZEROS)
+  NONCE = PRP(PRP_KEY, SERIAL)
+@end verbatim
+
+@code{ENCLESS} is AONT and chaffing function. There is no need in
+explicit separate authentication.

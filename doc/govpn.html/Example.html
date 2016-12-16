@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Example</title>
+
+<meta name="description" content="GoVPN: Example">
+<meta name="keywords" content="GoVPN: Example">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="User.html#User" rel="up" title="User">
+<link href="Developer.html#Developer" rel="next" title="Developer">
+<link href="Server.html#Server" rel="prev" title="Server">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Example"></a>
+<div class="header">
+<p>
+Previous: <a href="Server.html#Server" accesskey="p" rel="prev">Server</a>, Up: <a href="User.html#User" accesskey="u" rel="up">User</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Example-usage"></a>
+<h3 class="section">Example usage</h3>
+
+<p>Let&rsquo;s assume that there is some insecure link between your computer and
+WiFi-reachable gateway.
+</p>
+<ul>
+<li> You have got <code>wlan0</code> NIC with 192.168.0/24 network on it.
+</li><li> You want to create virtual encrypted and authenticated 172.16.0/24
+network and use it as a default transport.
+</li><li> Assume that outgoing GoVPN packets can be fragmented, so we do not
+bother configuring MTU of TAP interfaces. For better performance just
+lower it and check that no fragmentation of outgoing UDP packets occurs.
+</li></ul>
+
+<p><strong>Install</strong>. At first you must <a href="Installation.html#Installation">install</a> this
+software: download, <a href="Integrity.html#Integrity">check the signature</a>, compile.
+</p>
+<p><strong>Prepare the client</strong>. Generate client&rsquo;s verifier for Alice as an
+example:
+</p>
+
+<pre class="verbatim">client% ./utils/newclient.sh Alice
+Passphrase:
+Your client verifier is: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg
+
+Place the following YAML configuration entry on the server's side:
+
+    Alice:
+        up: /path/to/up.sh
+        iface: or TAP interface name
+        verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+</pre>
+<p><strong>Prepare the server</strong>. Add this entry to <samp>peers.yaml</samp>
+configuration file:
+</p>
+<pre class="verbatim">Alice:
+    iface: tap10
+    verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+</pre>
+<p><strong>Prepare network on GNU/Linux IPv4 server</strong>:
+</p>
+<pre class="verbatim">server% ip addr add 192.168.0.1/24 dev wlan0
+server% ip tuntap add dev tap10 mode tap
+server% ip addr add 172.16.0.1/24 dev tap10
+server% ip link set up dev tap10
+</pre>
+<p><strong>Run server daemon itself</strong>:
+</p>
+<pre class="verbatim">server% govpn-server -bind 192.168.0.1:1194
+</pre>
+<p><strong>Prepare network on GNU/Linux IPv4 client</strong>:
+</p>
+<pre class="verbatim">client% ip addr add 192.168.0.2/24 dev wlan0
+client% ip tuntap add dev tap10 mode tap
+client% ip addr add 172.16.0.2/24 dev tap10
+client% ip link set up dev tap10
+client% ip route add 0/1 via 172.16.0.1
+client% ip route add 128/1 via 172.16.0.1
+</pre>
+<p><strong>Run client daemon itself</strong>:
+</p><pre class="verbatim">client% govpn-client \
+    -verifier '$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg' \
+    -iface tap10 \
+    -remote 192.168.0.1:1194
+</pre>
+<p><strong>FreeBSD IPv6 similar client-server example</strong>:
+</p>
+<pre class="verbatim">server% ifconfig em0 inet6 fe80::1/64
+server% govpn-server -bind &quot;fe80::1%em0&quot;
+</pre>
+<pre class="verbatim">client% ifconfig me0 inet6 -ifdisabled auto_linklocal
+client% ifconfig tap10
+client% ifconfig tap10 inet6 fc00::2/96 up
+client% route -6 add default fc00::1
+client% govpn-client \
+    -verifier '$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg' \
+    -iface tap10 \
+    -remote &quot;[fe80::1%me0]&quot;:1194
+</pre><hr>
+<div class="header">
+<p>
+Previous: <a href="Server.html#Server" accesskey="p" rel="prev">Server</a>, Up: <a href="User.html#User" accesskey="u" rel="up">User</a> &nbsp; </p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+@node FAQ
+@unnumbered Frequently Asked Questions
+
+See also this page @ref{ЧАВО, on russian}.
+
+@menu
+* Why do not you use TLS?: Why not TLS.
+* Why do not you use SSH?: Why not SSH.
+* Why do not you use IPsec?: Why not IPsec.
+* Why GoVPN is written on Go?: Why Go.
+* Why do you authenticate with passphrases?: Why passphrases.
+* Why all network configuration must be done manually?: Why manual network configuration.
+* Why there is no either OS X or Windows support?: Why no proprietary OS support.
+* What do you mean by perfect forward secrecy?: What is perfect forward secrecy.
+* What do you mean by saying that clients are anonymous?: What is anonymity.
+* What do you mean by censorship resistance?: What is censorship resistance.
+* When should I use encryptionless mode?: When encryptionless mode.
+* When should I use noise option?: When noise option.
+* When should I use time synchronization option?: When timesync option.
+* Can I DoS (denial of service) the daemon?: Can I DoS daemon.
+* Why YAML for configuration?: Why YAML.
+@end menu
+
+@node Why not TLS
+@section Why do not you use TLS?
+
+@itemize
+@item It is complicated badly designed protocol.
+@item It uses Authenticate-then-Encrypt ordering of algorithms.
+@item Its libraries are huge and hard to read, review and analyze.
+@end itemize
+
+@node Why not SSH
+@section Why do not you use SSH?
+
+@itemize
+@item Its first protocol versions used A-a-E ordering, however later
+ones supports even ChaCha20-Poly1305 algorithms.
+@item OpenSSH does not support strong zero-knowledge password
+authentication.
+@end itemize
+
+@node Why not IPsec
+@section Why do not you use IPsec?
+
+It lacks strong zero-knowledge password authentication and, again,
+its code is hard to read.
+
+@node Why Go
+@section Why GoVPN is written on Go?
+
+Go is very easy to read, review and support. It makes complex code
+writing a harder task. It provides everything needed to the C language:
+array bounds checking, garbage collection and concurrency primitives. It
+provides lesser performance (however my setup on the notebook gives more
+than 750 Mbps of throughput), but higher reliability and much fewer
+lines of code.
+
+@node Why passphrases
+@section Why do you authenticate with passphrases?
+
+Human is capable of memorizing rather long passphrases (not passwords):
+100-200 characters, that gives ability to use it as a high-entropy key.
+You need to trust only yourself, neither hardware token nor some other
+storage device. It is convenient.
+
+@node Why manual network configuration
+@section Why all network configuration must be done manually?
+
+Because there are so many use-cases and setups, so many various
+protocols, that either I support all of them, or use complicated
+protocol setups like PPP, or just give right of the choice to the
+administrator. VPN is only just a layer, just like Ethernet cable.
+
+@node Why no proprietary OS support
+@section Why there is no either OS X or Windows support?
+
+Any closed source proprietary systems do not give ability to control the
+computer. You can not securely use cryptography-related stuff without
+controlling the underlying computing device. Choose another operating
+system.
+
+@node What is perfect forward secrecy
+@section What do you mean by perfect forward secrecy?
+
+You can not decrypt previously saved traffic by compromising long-lived
+keys. PFS property is per-session level: it won't protect from leaking
+the session key from the memory.
+
+@node What is anonymity
+@section What do you mean by saying that clients are anonymous?
+
+That third-party can not differentiate one client from another looking
+at the traffic (transport and handshake).
+
+@node What is censorship resistance
+@section What do you mean by censorship resistance?
+
+Unability to distinguish either is it GoVPN-traffic is passing by, or
+just @code{cat /dev/urandom | nc somehost}. If you can not differentiate
+one kind of traffic from another, then your only option is to forbid all
+kinds of it.
+
+@node When encryptionless mode
+@section When should I use @ref{Encless, encryptionless mode}?
+
+If you are operating under jurisdiction where courts can either sue you
+for encryption usage or force you to somehow reveal you encryption
+keys (however new session encryption keys are generated each session).
+Those courts can not demand for authentication and signing keys in most
+cases.
+
+@strong{Do not} let mode's name to confuse you: it still provides
+confidentiality and authenticity of transmitted data! But pay attention that
+this mode is traffic and resource hungry and currently operate only in TCP
+mode.
+
+If anything that can not be read by anyone is considered encryption,
+then encryptionless mode won't help you. Imagine that either you are
+talking on another foreign language, or just use another date encoding
+scheme.
+
+@node When noise option
+@section When should I use @ref{Noise, noise} option?
+
+In most cases you won't need it without @ref{CPR, constant packer rate}
+turned on. Without CPR and noise options GoVPN traffic (like TLS, IPsec,
+SSH and other VPN protocols) leaks underlying interface's packets
+timestamps and sizes. You can run traffic analysis and predict what is
+going on in the network. With CPR option enabled you can tell either
+somebody is online, or not -- nothing less, nothing more.
+
+@node When timesync option
+@section When should I use @ref{Timesync, time synchronization} option?
+
+Without that option, if someone captured initial handshake packet from
+the valid client, then it could repeat it and receive a handshake packet
+as an answer from server. This can be used to detect if some user's
+identity is known to server and that it is exactly GoVPN server.
+Timesync option forces adding timestamps to each handshake packet
+allowing only specified time window of packet validness. If you have got
+more or less synchronized clocks between your clients and server, then
+you can always use this option.
+
+@node Can I DoS daemon
+@section Can I DoS (denial of service) the daemon?
+
+Each transport packet is authenticated first with the very fast UMAC
+algorithm -- in most cases resource consumption of TCP/UDP layers will
+be higher then UMAC verifying. Each handshake message is processed only
+when an encrypted client's @ref{Identity, identity} is found: it uses
+fast PRP without any entropy usage.
+
+@node Why YAML
+@section Why YAML for configuration?
+
+There are not so many well-known formats that allow commenting, easy
+editing by human (XML is not human friendly at all, JSON is more or
+less). Probably the most useful feature is YAML's templates: it is very
+convenient for storing many clients sharing the same options in the
+configuration file.

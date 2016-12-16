@@ -1,0 +1,23 @@
+@node Proxy
+@subsection Proxy
+
+You can proxy your requests through HTTP using CONNECT method. This can
+help if you are only allowed to access outside world through HTTP proxy
+server.
+
+Server has @emph{-proxy} option allowing to listen on specified port and
+accept HTTP request. All of them will be treated as a CONNECT method
+switching to raw TCP mode. You can make POST request and server will
+anyway switch to raw TCP mode. You are not forced to use this option:
+any external HTTP proxy server can be used.
+
+Client has @emph{-proxy} option forcing it to connect to proxy and send
+CONNECT method. Optionally it can be authenticated on it using
+@emph{-proxy-auth} HTTP Basic method.
+
+@verbatim
+% govpn-client [...] -proto tcp \
+    -remote "$REMOTE_ADDR":1194 \
+    -proxy 192.168.55.1:8888 \
+    -proxy-auth mylogin:password
+@end verbatim

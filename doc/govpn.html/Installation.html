@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: Installation</title>
+
+<meta name="description" content="GoVPN: Installation">
+<meta name="keywords" content="GoVPN: Installation">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="Tarballs.html#Tarballs" rel="next" title="Tarballs">
+<link href="Reliz-1_002e0.html#g_t_0420_0435_043b_0438_0437-1_002e0" rel="prev" title="Релиз 1.0">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="Installation"></a>
+<div class="header">
+<p>
+Next: <a href="Precautions.html#Precautions" accesskey="n" rel="next">Precautions</a>, Previous: <a href="Russkii.html#g_t_0420_0443_0441_0441_043a_0438_0439" accesskey="p" rel="prev">Русский</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Installation-1"></a>
+<h2 class="unnumbered">Installation</h2>
+
+<p>Possibly GoVPN already exists in your distribution:
+</p>
+<ul>
+<li> <a href="https://aur.archlinux.org/packages/govpn/">AUR</a>
+</li><li> <a href="http://www.freshports.org/security/govpn/">FreeBSD ports</a>
+</li></ul>
+
+<p>GoVPN is written on <a href="https://golang.org/">Go</a> programming language
+and you have to install Go compiler (1.5+ version is highly recommended,
+1.4 is the minimal sufficient): <code>lang/go</code> port in FreeBSD and
+<code>golang</code> package in most GNU/Linux distributions. <em>Make</em> (BSD
+and GNU ones are fine) is recommended for convenient building.
+<a href="https://www.gnu.org/software/texinfo/">Texinfo</a> (6.1+ version is
+recommended) is used for building documentation. Possibly you also need
+to install TUN/TAP interface utilities (depending on your operating
+system): <code>uml-utilities</code> package in most GNU/Linux distributions.
+</p>
+<p>Included required libraries:
+</p>
+<table>
+<thead><tr><th width="40%">Library</th><th width="20%">Platform</th><th width="40%">Licence</th></tr></thead>
+<tr><td width="40%"><code>github.com/agl/ed25519</code></td><td width="20%">All</td><td width="40%">BSD 3-Clause</td></tr>
+<tr><td width="40%"><code>github.com/bigeagle/water</code></td><td width="20%">GNU/Linux</td><td width="40%">BSD 3-Clause</td></tr>
+<tr><td width="40%"><code>github.com/dchest/blake2b</code></td><td width="20%">All</td><td width="40%">CC0 1.0</td></tr>
+<tr><td width="40%"><code>github.com/go-yaml/yaml</code></td><td width="20%">All</td><td width="40%">LGPLv3 and MIT</td></tr>
+<tr><td width="40%"><code>github.com/magical/argon2</code></td><td width="20%">All</td><td width="40%">BSD 2-Clause</td></tr>
+<tr><td width="40%"><code>golang.org/x/crypto</code></td><td width="20%">All</td><td width="40%">BSD 3-Clause</td></tr>
+</table>
+
+<p>Get <a href="Tarballs.html#Tarballs">the tarball</a>, check its
+<a href="Integrity.html#Integrity">integrity and authenticity</a> and run <code>make</code>.
+<em>govpn-client</em>, <em>govpn-server</em>, <em>govpn-verifier</em>
+binaries will be built in the current directory:
+</p>
+<pre class="verbatim">% wget http://www.cypherpunks.ru/govpn/download/govpn-2.3.tar.xz
+% wget http://www.cypherpunks.ru/govpn/download/govpn-2.3.tar.xz.sig
+% gpg --verify govpn-2.3.tar.xz.sig govpn-2.3.tar.xz
+% tar xf govpn-2.3.tar.xz
+% make -C govpn-2.3 all
+</pre>
+<p>There is <code>install</code> target respecting <code>DESTDIR</code>. It will
+install binaries, info-documentation and utilities.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="Tarballs.html#Tarballs" accesskey="1">Prepared tarballs</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Integrity.html#Integrity" accesskey="2">Tarballs integrity check</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="Sources.html#Sources" accesskey="3">Development source code</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+
+
+
+</body>
+</html>

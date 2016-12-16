@@ -1,0 +1,3038 @@
+This is govpn.info, produced by makeinfo version 6.1 from index.texi.
+
+This manual is for GoVPN – simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+   Copyright © 2014-2016 Sergey Matveev <stargrave@stargrave.org>
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.3 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts.  A copy of the license is included in the
+     section entitled "Copying conditions".
+
+
+File: govpn.info,  Node: Top,  Next: FAQ,  Up: (dir)
+
+GoVPN
+*****
+
+GoVPN is simple free software virtual private network daemon, aimed to
+be reviewable, secure and DPI
+(https://en.wikipedia.org/wiki/Deep_packet_inspection)/censorship-resistant.
+
+   See also this page *note on russian: О демоне.
+
+   • Copylefted (https://www.gnu.org/philosophy/pragmatic.html) free
+     software (https://www.gnu.org/philosophy/free-sw.html): licenced
+     under GPLv3+ (https://www.gnu.org/licenses/gpl-3.0.html).
+
+   • Fast strong *note passphrase authenticated: PAKE. augmented *note
+     key agreement protocol: Handshake. with zero-knowledge mutual peers
+     authentication (PAKE DH A-EKE (Diffie-Hellman Augmented Encrypted
+     Key Exchange)).
+
+   • *note Augmented authentication tokens: Verifier structure.
+     resistant to offline dictionary attacks.  They use CPU and memory
+     hardened hashing algorithm.  An attacker can not masquerade a
+     client even with server passphrase verifiers compromising.
+
+   • Encrypted and authenticated *note payload transport: Transport.
+     with 128-bit *note security margin: Developer. state-of-the-art
+     cryptography.
+
+   • Optional *note encryptionless mode: Encless. of operation: no
+     encryption functions are applied for outgoing traffic, but still
+     confidentiality preserving encoding.  Jurisdictions and courts can
+     not either force you to reveal encryption keys or sue for
+     encryption usage.
+
+   • Censorship resistant handshake and transport messages: fully
+     indistinguishable from the noise with optionally hidden packets
+     length.
+
+   • Perfect forward secrecy
+     (https://en.wikipedia.org/wiki/Forward_secrecy) property.
+
+   • Replay attack protection (using one-time MACs and optional *note
+     time synchronization: Timesync. requirement).
+
+   • Built-in rehandshake (session key rotation) and heartbeat features.
+
+   • Ability to hide packets length with the *note noise: Noise. data.
+
+   • Ability to hide payload timestamps with *note constant packet rate:
+     CPR. traffic.
+
+   • Compatible with EGD (http://egd.sourceforge.net/) (entropy
+     gathering daemon) PRNGs.
+
+   • Several simultaneous clients support with per-client configuration
+     options.  Clients have pre-established *note identity: Identity.
+     invisible for third-parties (they are anonymous).
+
+   • Uses TAP (https://en.wikipedia.org/wiki/TAP_(network_driver))
+     underlying network interfaces.
+
+   • Can use *note UDP and TCP: Network. or HTTP *note proxies: Proxy.
+     for accessing the server.
+
+   • Fully IPv4 and IPv6 compatible.
+
+   • Optional built-in HTTP-server for retrieving real-time *note
+     statistics: Stats. information about known connected peers in JSON
+     (http://json.org/) format.
+
+   • Server is configured through the YAML (http://yaml.org/) file.
+
+   • Written on Go (https://golang.org/) programming language with
+     simple code that can be read and reviewed.
+
+   • GNU (https://www.gnu.org/)/Linux and FreeBSD
+     (https://www.freebsd.org/) support.
+
+                    *note *Download it*: Tarballs.
+
+* Menu:
+
+* Frequently Asked Questions: FAQ.
+* News::
+* Информация на русском: Русский.
+* Installation::
+* Precautions::
+* User manual: User.
+* Developer manual: Developer.
+* Contacts and feedback: Contacts.
+* Thanks::
+* In the media: Media.
+* Copying conditions::
+
+
+File: govpn.info,  Node: FAQ,  Next: News,  Prev: Top,  Up: Top
+
+Frequently Asked Questions
+**************************
+
+See also this page *note on russian: ЧАВО.
+
+* Menu:
+
+* Why do not you use TLS?: Why not TLS.
+* Why do not you use SSH?: Why not SSH.
+* Why do not you use IPsec?: Why not IPsec.
+* Why GoVPN is written on Go?: Why Go.
+* Why do you authenticate with passphrases?: Why passphrases.
+* Why all network configuration must be done manually?: Why manual network configuration.
+* Why there is no either OS X or Windows support?: Why no proprietary OS support.
+* What do you mean by perfect forward secrecy?: What is perfect forward secrecy.
+* What do you mean by saying that clients are anonymous?: What is anonymity.
+* What do you mean by censorship resistance?: What is censorship resistance.
+* When should I use encryptionless mode?: When encryptionless mode.
+* When should I use noise option?: When noise option.
+* When should I use time synchronization option?: When timesync option.
+* Can I DoS (denial of service) the daemon?: Can I DoS daemon.
+* Why YAML for configuration?: Why YAML.
+
+
+File: govpn.info,  Node: Why not TLS,  Next: Why not SSH,  Up: FAQ
+
+Why do not you use TLS?
+=======================
+
+   • It is complicated badly designed protocol.
+   • It uses Authenticate-then-Encrypt ordering of algorithms.
+   • Its libraries are huge and hard to read, review and analyze.
+
+
+File: govpn.info,  Node: Why not SSH,  Next: Why not IPsec,  Prev: Why not TLS,  Up: FAQ
+
+Why do not you use SSH?
+=======================
+
+   • Its first protocol versions used A-a-E ordering, however later ones
+     supports even ChaCha20-Poly1305 algorithms.
+   • OpenSSH does not support strong zero-knowledge password
+     authentication.
+
+
+File: govpn.info,  Node: Why not IPsec,  Next: Why Go,  Prev: Why not SSH,  Up: FAQ
+
+Why do not you use IPsec?
+=========================
+
+It lacks strong zero-knowledge password authentication and, again, its
+code is hard to read.
+
+
+File: govpn.info,  Node: Why Go,  Next: Why passphrases,  Prev: Why not IPsec,  Up: FAQ
+
+Why GoVPN is written on Go?
+===========================
+
+Go is very easy to read, review and support.  It makes complex code
+writing a harder task.  It provides everything needed to the C language:
+array bounds checking, garbage collection and concurrency primitives.
+It provides lesser performance (however my setup on the notebook gives
+more than 750 Mbps of throughput), but higher reliability and much fewer
+lines of code.
+
+
+File: govpn.info,  Node: Why passphrases,  Next: Why manual network configuration,  Prev: Why Go,  Up: FAQ
+
+Why do you authenticate with passphrases?
+=========================================
+
+Human is capable of memorizing rather long passphrases (not passwords):
+100-200 characters, that gives ability to use it as a high-entropy key.
+You need to trust only yourself, neither hardware token nor some other
+storage device.  It is convenient.
+
+
+File: govpn.info,  Node: Why manual network configuration,  Next: Why no proprietary OS support,  Prev: Why passphrases,  Up: FAQ
+
+Why all network configuration must be done manually?
+====================================================
+
+Because there are so many use-cases and setups, so many various
+protocols, that either I support all of them, or use complicated
+protocol setups like PPP, or just give right of the choice to the
+administrator.  VPN is only just a layer, just like Ethernet cable.
+
+
+File: govpn.info,  Node: Why no proprietary OS support,  Next: What is perfect forward secrecy,  Prev: Why manual network configuration,  Up: FAQ
+
+Why there is no either OS X or Windows support?
+===============================================
+
+Any closed source proprietary systems do not give ability to control the
+computer.  You can not securely use cryptography-related stuff without
+controlling the underlying computing device.  Choose another operating
+system.
+
+
+File: govpn.info,  Node: What is perfect forward secrecy,  Next: What is anonymity,  Prev: Why no proprietary OS support,  Up: FAQ
+
+What do you mean by perfect forward secrecy?
+============================================
+
+You can not decrypt previously saved traffic by compromising long-lived
+keys.  PFS property is per-session level: it won’t protect from leaking
+the session key from the memory.
+
+
+File: govpn.info,  Node: What is anonymity,  Next: What is censorship resistance,  Prev: What is perfect forward secrecy,  Up: FAQ
+
+What do you mean by saying that clients are anonymous?
+======================================================
+
+That third-party can not differentiate one client from another looking
+at the traffic (transport and handshake).
+
+
+File: govpn.info,  Node: What is censorship resistance,  Next: When encryptionless mode,  Prev: What is anonymity,  Up: FAQ
+
+What do you mean by censorship resistance?
+==========================================
+
+Unability to distinguish either is it GoVPN-traffic is passing by, or
+just ‘cat /dev/urandom | nc somehost’.  If you can not differentiate one
+kind of traffic from another, then your only option is to forbid all
+kinds of it.
+
+
+File: govpn.info,  Node: When encryptionless mode,  Next: When noise option,  Prev: What is censorship resistance,  Up: FAQ
+
+When should I use *note encryptionless mode: Encless.?
+======================================================
+
+If you are operating under jurisdiction where courts can either sue you
+for encryption usage or force you to somehow reveal you encryption keys
+(however new session encryption keys are generated each session).  Those
+courts can not demand for authentication and signing keys in most cases.
+
+   *Do not* let mode’s name to confuse you: it still provides
+confidentiality and authenticity of transmitted data!  But pay attention
+that this mode is traffic and resource hungry and currently operate only
+in TCP mode.
+
+   If anything that can not be read by anyone is considered encryption,
+then encryptionless mode won’t help you.  Imagine that either you are
+talking on another foreign language, or just use another date encoding
+scheme.
+
+
+File: govpn.info,  Node: When noise option,  Next: When timesync option,  Prev: When encryptionless mode,  Up: FAQ
+
+When should I use *note noise: Noise. option?
+=============================================
+
+In most cases you won’t need it without *note constant packer rate: CPR.
+turned on.  Without CPR and noise options GoVPN traffic (like TLS,
+IPsec, SSH and other VPN protocols) leaks underlying interface’s packets
+timestamps and sizes.  You can run traffic analysis and predict what is
+going on in the network.  With CPR option enabled you can tell either
+somebody is online, or not – nothing less, nothing more.
+
+
+File: govpn.info,  Node: When timesync option,  Next: Can I DoS daemon,  Prev: When noise option,  Up: FAQ
+
+When should I use *note time synchronization: Timesync. option?
+===============================================================
+
+Without that option, if someone captured initial handshake packet from
+the valid client, then it could repeat it and receive a handshake packet
+as an answer from server.  This can be used to detect if some user’s
+identity is known to server and that it is exactly GoVPN server.
+Timesync option forces adding timestamps to each handshake packet
+allowing only specified time window of packet validness.  If you have
+got more or less synchronized clocks between your clients and server,
+then you can always use this option.
+
+
+File: govpn.info,  Node: Can I DoS daemon,  Next: Why YAML,  Prev: When timesync option,  Up: FAQ
+
+Can I DoS (denial of service) the daemon?
+=========================================
+
+Each transport packet is authenticated first with the very fast UMAC
+algorithm – in most cases resource consumption of TCP/UDP layers will be
+higher then UMAC verifying.  Each handshake message is processed only
+when an encrypted client’s *note identity: Identity. is found: it uses
+fast PRP without any entropy usage.
+
+
+File: govpn.info,  Node: Why YAML,  Prev: Can I DoS daemon,  Up: FAQ
+
+Why YAML for configuration?
+===========================
+
+There are not so many well-known formats that allow commenting, easy
+editing by human (XML is not human friendly at all, JSON is more or
+less).  Probably the most useful feature is YAML’s templates: it is very
+convenient for storing many clients sharing the same options in the
+configuration file.
+
+
+File: govpn.info,  Node: News,  Next: Русский,  Prev: FAQ,  Up: Top
+
+News
+****
+
+See also this page *note on russian: Новости.
+
+* Menu:
+
+* Release 5.7::
+* Release 5.6::
+* Release 5.5::
+* Release 5.4::
+* Release 5.3::
+* Release 5.2::
+* Release 5.1::
+* Release 5.0::
+* Release 4.2::
+* Release 4.1::
+* Release 4.0::
+* Release 3.5::
+* Release 3.4::
+* Release 3.3::
+* Release 3.2::
+* Release 3.1::
+* Release 3.0::
+* Release 2.4::
+* Release 2.3::
+* Release 2.2::
+* Release 2.1::
+* Release 2.0::
+* Release 1.5::
+* Release 1.4::
+* Release 1.3::
+* Release 1.1::
+* Release 1.0::
+
+
+File: govpn.info,  Node: Release 5.7,  Next: Release 5.6,  Up: News
+
+Release 5.7
+===========
+
+   • TAP interface name and remote peer’s address are passed to up- and
+     down- scripts through environment variables.
+   • Update Argon2 library to use version 1.3 of the algorithm.
+
+
+File: govpn.info,  Node: Release 5.6,  Next: Release 5.5,  Prev: Release 5.7,  Up: News
+
+Release 5.6
+===========
+
+   • Added up/down example script for replacing default route (thanks to
+     Zhuoyun Wei).
+   • Fixed documentation bug: ‘.info’ was not installing.
+
+
+File: govpn.info,  Node: Release 5.5,  Next: Release 5.4,  Prev: Release 5.6,  Up: News
+
+Release 5.5
+===========
+
+   • Ability to work on 32-bit platforms.  _sync/atomic_ library has
+     some specific issues that caused panics on previous versions.
+
+
+File: govpn.info,  Node: Release 5.4,  Next: Release 5.3,  Prev: Release 5.5,  Up: News
+
+Release 5.4
+===========
+
+   • Added optional *note time synchronization: Timesync. requirement.
+     It will add timestamps in handshake PRP authentication, disallowing
+     to repeat captured packet and get reply from the server, making it
+     visible to DPI.
+
+
+File: govpn.info,  Node: Release 5.3,  Next: Release 5.2,  Prev: Release 5.4,  Up: News
+
+Release 5.3
+===========
+
+   • Fixed minor bug with ‘newclient.sh’ that caught "Passphrase:"
+     prompt and inserted it into example YAML output.  Just replaced
+     stdout output to stderr for that prompt.
+
+
+File: govpn.info,  Node: Release 5.2,  Next: Release 5.1,  Prev: Release 5.3,  Up: News
+
+Release 5.2
+===========
+
+   • Ability to read passphrases directly from the terminal (user’s
+     input) without using of keyfiles.  ‘storekey.sh’ utility removed.
+
+
+File: govpn.info,  Node: Release 5.1,  Next: Release 5.0,  Prev: Release 5.2,  Up: News
+
+Release 5.1
+===========
+
+   • Server is configured using YAML (http://yaml.org/) file.  It is
+     very convenient to have comments and templates, comparing to JSON.
+   • Incompatible with previous versions replacement of _HSalsa20_ with
+     _BLAKE2b_ in handshake code.
+
+
+File: govpn.info,  Node: Release 5.0,  Next: Release 4.2,  Prev: Release 5.1,  Up: News
+
+Release 5.0
+===========
+
+   • New optional *note encryptionless mode: Encless. of operation.
+     Technically no encryption functions are applied for outgoing
+     packets, so you can not be forced to reveal your encryption keys or
+     sued for encryption usage.
+   • *note MTU::s are configured on per-user basis.
+   • Simplified payload padding scheme, saving one byte of data.
+   • Ability to specify TAP interface name explicitly without any
+     up-scripts for convenience.
+   • ‘govpn-verifier’ utility also can use *note EGD::.
+
+
+File: govpn.info,  Node: Release 4.2,  Next: Release 4.1,  Prev: Release 5.0,  Up: News
+
+Release 4.2
+===========
+
+   • Fixed non-critical bug when server may fail if up-script is not
+     executed successfully.
+
+
+File: govpn.info,  Node: Release 4.1,  Next: Release 4.0,  Prev: Release 4.2,  Up: News
+
+Release 4.1
+===========
+
+   • Argon2d (https://password-hashing.net/#argon2) is used instead of
+     PBKDF2 for password verifier hashing.
+   • Client’s identity is stored inside the verifier, so it simplifies
+     server-side configuration and the code.
+
+
+File: govpn.info,  Node: Release 4.0,  Next: Release 3.5,  Prev: Release 4.1,  Up: News
+
+Release 4.0
+===========
+
+   • Handshake messages can be noised: their messages lengths are
+     hidden.  Now they are indistinguishable from transport messages.
+   • Parallelized clients processing on the server side.
+   • Much higher overall performance.
+   • Single JSON file server configuration.
+
+
+File: govpn.info,  Node: Release 3.5,  Next: Release 3.4,  Prev: Release 4.0,  Up: News
+
+Release 3.5
+===========
+
+   • Ability to use *note TCP: Network. network transport.  Server can
+     listen on both UDP and TCP sockets.
+   • Ability to use *note HTTP proxies: Proxy. (through CONNECT method)
+     for accessing the server.  Server can also emulate HTTP proxy
+     behaviour.
+   • Updated Poly1305 library with ARM-related bugfixes.
+   • Go 1.5+ version is highly recommended because of performance
+     reasons.
+
+
+File: govpn.info,  Node: Release 3.4,  Next: Release 3.3,  Prev: Release 3.5,  Up: News
+
+Release 3.4
+===========
+
+   • Ability to use external *note EGD::-compatible PRNGs.  Now you are
+     able to use GoVPN even on systems with the bad ‘/dev/random’,
+     providing higher quality entropy from external sources.
+   • Removed ‘-noncediff’ option.  It is replaced with in-memory storage
+     of seen nonces, thus eliminating possible replay attacks at all
+     without performance degradation related to inbound packets
+     reordering.
+
+
+File: govpn.info,  Node: Release 3.3,  Next: Release 3.2,  Prev: Release 3.4,  Up: News
+
+Release 3.3
+===========
+
+   • Compatibility with an old GNU Make 3.x.  Previously only BSD Make
+     and GNU Make 4.x were supported.
+   • ‘/dev/urandom’ is used for correct client identity generation under
+     GNU/Linux systems.  Previously ‘/dev/random’ can produce less than
+     required 128-bits of random.
+
+
+File: govpn.info,  Node: Release 3.2,  Next: Release 3.1,  Prev: Release 3.3,  Up: News
+
+Release 3.2
+===========
+
+   • Deterministic building: dependent libraries source code commits are
+     fixed in our makefiles.
+   • No Internet connection is needed for building the source code: all
+     required libraries are included in release tarballs.
+   • FreeBSD Make compatibility.  GNU Make is not necessary anymore.
+
+
+File: govpn.info,  Node: Release 3.1,  Next: Release 3.0,  Prev: Release 3.2,  Up: News
+
+Release 3.1
+===========
+
+   • Diffie-Hellman public keys are encoded with Elligator algorithm
+     when sending over the wire, making them indistinguishable from the
+     random strings, preventing detection of successful decryption try
+     when guessing passwords (that are used to create DSA public keys).
+     But this will consume twice entropy for DH key generation in
+     average.
+
+
+File: govpn.info,  Node: Release 3.0,  Next: Release 2.4,  Prev: Release 3.1,  Up: News
+
+Release 3.0
+===========
+
+   • EKE protocol is replaced by Augmented-EKE and static symmetric
+     (both sides have it) pre-shared key replaced with server-side
+     verifier.  This requires, 64 more bytes in handshake traffic,
+     Ed25519 dependency with corresponding sign/verify computations,
+     PBKDF2 dependency and its usage on the client side during
+     handshake.
+
+     A-EKE with PBKDF2-based verifiers is resistant to dictionary
+     attacks, can use human memorable passphrases instead of static keys
+     and server-side verifiers can not be used for authentication
+     (compromised server does not leak client’s authentication
+     keys/passphrases).
+
+   • Changed transport message structure: added payload packet’s length.
+     This will increase transport overhead for two bytes, but heartbeat
+     packets became smaller
+
+   • Ability to hide underlying packets lengths by appending noise, junk
+     data during transmission.  Each packet can be fill up-ed to its
+     maximal MTU size.
+
+   • Ability to hide underlying packets appearance rate, by generating
+     Constant Packet Rate traffic.  This includes noise generation too.
+   • Per-peer ‘-timeout’, ‘-noncediff’, ‘-noise’ and ‘-cpr’
+     configuration options for server.
+
+
+File: govpn.info,  Node: Release 2.4,  Next: Release 2.3,  Prev: Release 3.0,  Up: News
+
+Release 2.4
+===========
+
+   • Added ability to optionally run built-in HTTP-server responding
+     with JSON of all known connected peers information.  Real-time
+     client’s statistics.
+   • Documentation is explicitly licenced under GNU FDL 1.3+.
+
+
+File: govpn.info,  Node: Release 2.3,  Next: Release 2.2,  Prev: Release 2.4,  Up: News
+
+Release 2.3
+===========
+
+   • Handshake packets became indistinguishable from the random.  Now
+     all GoVPN’s traffic is the noise for men in the middle.
+
+   • Handshake messages are smaller (16% traffic reduce).
+
+   • Adversary now can not create malicious fake handshake packets that
+     will force server to generate private DH key, preventing entropy
+     consuming and resource heavy computations.
+
+
+File: govpn.info,  Node: Release 2.2,  Next: Release 2.1,  Prev: Release 2.3,  Up: News
+
+Release 2.2
+===========
+
+   • Fixed several possible channel deadlocks.
+
+
+File: govpn.info,  Node: Release 2.1,  Next: Release 2.0,  Prev: Release 2.2,  Up: News
+
+Release 2.1
+===========
+
+   • Fixed Linux-related building.
+
+
+File: govpn.info,  Node: Release 2.0,  Next: Release 1.5,  Prev: Release 2.1,  Up: News
+
+Release 2.0
+===========
+
+   • Added clients identification.
+   • Simultaneous several clients support by server.
+   • Per-client up/down scripts.
+
+
+File: govpn.info,  Node: Release 1.5,  Next: Release 1.4,  Prev: Release 2.0,  Up: News
+
+Release 1.5
+===========
+
+   • Nonce obfuscation/encryption.
+
+
+File: govpn.info,  Node: Release 1.4,  Next: Release 1.3,  Prev: Release 1.5,  Up: News
+
+Release 1.4
+===========
+
+   • Performance optimizations.
+
+
+File: govpn.info,  Node: Release 1.3,  Next: Release 1.1,  Prev: Release 1.4,  Up: News
+
+Release 1.3
+===========
+
+   • Heartbeat feature.
+   • Rehandshake feature.
+   • up- and down- optional scripts.
+
+
+File: govpn.info,  Node: Release 1.1,  Next: Release 1.0,  Prev: Release 1.3,  Up: News
+
+Release 1.1
+===========
+
+   • FreeBSD support.
+
+
+File: govpn.info,  Node: Release 1.0,  Prev: Release 1.1,  Up: News
+
+Release 1.0
+===========
+
+   • Initial stable release.
+
+
+File: govpn.info,  Node: Русский,  Next: Installation,  Prev: News,  Up: Top
+
+Информация на русском
+*********************
+
+* Menu:
+
+* О демоне::
+* Часто задаваемые вопросы: ЧАВО.
+* Новости::
+
+
+File: govpn.info,  Node: О демоне,  Next: ЧАВО,  Up: Русский
+
+Подробнее о демоне GoVPN
+========================
+
+GoVPN это простой демон виртуальных частных сетей, код которого нацелен
+на лёгкость чтения и анализа, безопасность, устойчивость к DPI/цензуре.
+
+   • Свободное программное обеспечение
+     (https://www.gnu.org/philosophy/free-sw.ru.html), копилефт
+     (https://www.gnu.org/philosophy/pragmatic.ru.html): лицензировано
+     под условиями GPLv3+
+     (https://www.gnu.org/licenses/gpl-3.0.ru.html).
+
+   • Быстрый сильный *note аутентифицируемый по парольной фразе: PAKE.
+     несбалансированный протокол *note согласования ключей: Handshake. с
+     двусторонней аутентификацией сторон и нулевым неразглашением (PAKE
+     DH A-EKE (Diffie-Hellman Augmented Encrypted Key Exchange)).
+
+   • *note Несбалансированные верификаторы: Verifier structure.
+     устойчивые к внесетевым (offline) атакам по словарю.  Используют
+     усиленный по CPU и памяти алгоритм хэширования.  Злоумышленник не
+     может замаскироваться под клиента даже скомпрометировав базу данных
+     токенов сервера.
+
+   • Зашифрованный и аутентифицируемый *note транспортный протокол:
+     Transport. передачи данных с 128-бит *note порогом безопасности:
+     Developer. и современной криптографией.
+
+   • Опциональный *note нешифрованный режим: Encless.: функции
+     шифрования не применяются для исходящего трафика, вместо них
+     кодирование всё-равно обеспечивающее конфиденциальность.
+     Юрисдикции и суды не могут вас вынудить выдать ключи шифрования или
+     привлечь за использование шифрования.
+
+   • Цензуроустойчивые сообщения транспорта и рукопожатия: неотличимые
+     от шума с опциональным скрытием размеров сообщений.
+
+   • Свойство совершенной прямой секретности
+     (https://ru.wikipedia.org/wiki/Perfect_forward_secrecy) (perfect
+     forward secrecy).
+
+   • Защита от атак повторного воспроизведения (replay) (используя
+     одноразовые MAC и опциональное условие *note синхронизации времени:
+     Timesync.).
+
+   • Встроенные функции пересогласования ключей (ротация сессионных
+     ключей) и сердцебиения (heartbeat).
+
+   • Возможность скрывать размеры пакетов путём *note зашумления: Noise.
+     данных.
+
+   • Возможность скрывать временные характеристики полезной нагрузки
+     путём *note постоянного по скорости: CPR. трафика.
+
+   • Совместимость с EGD (http://egd.sourceforge.net/) (демон сборки
+     энтропии) генераторами псевдослучайных чисел.
+
+   • Поддержка нескольких клиентов одновременно с специфичной для
+     каждого конфигурацией.  Клиенты имеют заранее установленный *note
+     идентификатор: Identity, невидимый третьим лицам (они анонимны для
+     них).
+
+   • Использует TAP (https://ru.wikipedia.org/wiki/TUN/TAP) низлежащие
+     сетевые интерфейсы.
+
+   • Может работать поверх *note UDP и TCP: Network. или HTTP *note
+     прокси: Proxy. для доступа к серверу.
+
+   • Полностью IPv4 и IPv6 совместимый.
+
+   • Опциональный встроенный HTTP-сервер для получения *note статистики:
+     Stats. о подключённых клиентах в режиме реального времени в JSON
+     (http://json.org/) формате.
+
+   • Сервер конфигурируется используя YAML (http://yaml.org/) файл.
+
+   • Написан на языке Go (https://golang.org/) с простым кодом,
+     ориентированным на лёгкость чтения и анализа.
+
+   • Поддержка GNU (https://www.gnu.org/)/Linux и FreeBSD
+     (https://www.freebsd.org/).
+
+
+File: govpn.info,  Node: ЧАВО,  Next: Новости,  Prev: О демоне,  Up: Русский
+
+Часто задаваемые вопросы
+========================
+
+* Menu:
+
+* Почему вы не используете TLS?: Почему не TLS.
+* Почему вы не используете SSH?: Почему не SSH.
+* Почему вы не используете IPsec?: Почему не IPsec.
+* Почему GoVPN написан на Go?: Почему Go.
+* Почему вы аутентифицируете по парольной фразе?: Почему парольные фразы.
+* Почему вся настройка сети делается вручную?: Почему ручная настройка сети.
+* Почему нет поддержки OS X или Windows?: Почему нет поддержки проприетарных ОС.
+* Что вы подразумеваете под совершенной прямой секретностью?: Что такое PFS.
+* Что вы подразумеваете когда говорите что клиенты анонимны?: Что такое анонимность.
+* Что вы подразумеваете под цензуроустойчивостью?: Что такое цензуроустойчивость.
+* Когда я должен использовать нешифрованный режим?: Когда нешифрованный режим.
+* Когда я должен использовать noise опцию?: Когда noise опцию.
+* Когда я должен использовать опцию синхронизации времени?: Когда синхронизацию времени.
+* Могу ли я сделать DoS (отказ в обслуживании) демона?: Можно ли DoS демона.
+* Почему YAML для конфигурации?: Почему YAML.
+
+
+File: govpn.info,  Node: Почему не TLS,  Next: Почему не SSH,  Up: ЧАВО
+
+Почему вы не используете TLS?
+-----------------------------
+
+   • Это сложный плохо спроектированный протокол.
+   • Он использует Аутентификацию-затем-Шифрование порядок использования
+     алгоритмов.
+   • Его библиотеки огромны и сложны для чтения, ревью и анализа.
+
+
+File: govpn.info,  Node: Почему не SSH,  Next: Почему не IPsec,  Prev: Почему не TLS,  Up: ЧАВО
+
+Почему вы не используете SSH?
+-----------------------------
+
+   • Его первые версии использовали Аутентификацию-и-Шифрование порядок,
+     однако более поздние поддерживают даже ChaCha20-Poly1305 алгоритм.
+   • OpenSSH не поддерживает сильные протоколы аутентификации по паролю
+     с нулевым неразглашением.
+
+
+File: govpn.info,  Node: Почему не IPsec,  Next: Почему Go,  Prev: Почему не SSH,  Up: ЧАВО
+
+Почему вы не используете IPsec?
+-------------------------------
+
+В нём нет сильного протокола аутентификации по паролю с нулевым
+неразглашением и, снова, его код сложно читать.
+
+
+File: govpn.info,  Node: Почему Go,  Next: Почему парольные фразы,  Prev: Почему не IPsec,  Up: ЧАВО
+
+Почему GoVPN написан на Go?
+---------------------------
+
+Go очень легко читается, поддаётся ревью и поддержке.  Он усложняет
+написание сложного кода.  Он предоставляет всё что нужно для C языка:
+проверки границ массивов, сборщик мусора и конкурентные примитивы.  Он
+обеспечивает меньшую производительность (хотя на моём ноутбуке даёт
+более чем 750 Mbps пропускной способности), но большую надёжность и
+гораздо меньше строк кода.
+
+
+File: govpn.info,  Node: Почему парольные фразы,  Next: Почему ручная настройка сети,  Prev: Почему Go,  Up: ЧАВО
+
+Почему вы аутентифицируете по парольной фразе?
+----------------------------------------------
+
+Человек способ запоминать достаточно длинные парольные фразы (не
+пароли): 100-200 символов, что даёт возможность использовать её как
+высокоэнтропийный ключ.  Вам нужно доверять только себе, не аппаратному
+токену или другому устройству хранения.  Это удобно.
+
+
+File: govpn.info,  Node: Почему ручная настройка сети,  Next: Почему нет поддержки проприетарных ОС,  Prev: Почему парольные фразы,  Up: ЧАВО
+
+Почему вся настройка сети делается вручную?
+-------------------------------------------
+
+Потому-что существует так много вариантов использования, конфигураций и
+установок, что или я поддерживаю их всех, или использую громоздкие
+протоколы типы PPP, или просто даю право выбора администратору.  VPN это
+всего-лишь прослойка.
+
+
+File: govpn.info,  Node: Почему нет поддержки проприетарных ОС,  Next: Что такое PFS,  Prev: Почему ручная настройка сети,  Up: ЧАВО
+
+Почему нет поддержки OS X или Windows?
+--------------------------------------
+
+Любые проприетарные системы с закрытым исходным кодом не дают
+возможности управлять компьютером.  Вы не можете безопасно использовать
+всё что касается криптографии без контроля над нижестоящим
+вычислительным устройством.  Выбирайте другую операционную систему.
+
+
+File: govpn.info,  Node: Что такое PFS,  Next: Что такое анонимность,  Prev: Почему нет поддержки проприетарных ОС,  Up: ЧАВО
+
+Что вы подразумеваете под совершенной прямой секретностью?
+----------------------------------------------------------
+
+Что вы не можете дешифровать ранее перехваченный трафик если ваши
+долгоживущие ключи будут скомпрометированы.  Это свойство работает на
+уровне сессии: оно не спасёт если сессионный ключ скомпрометирован из
+памяти.
+
+
+File: govpn.info,  Node: Что такое анонимность,  Next: Что такое цензуроустойчивость,  Prev: Что такое PFS,  Up: ЧАВО
+
+Что вы подразумеваете когда говорите что клиенты анонимны?
+----------------------------------------------------------
+
+Что третьей лицо не может отличить одного клиента от другого, смотря на
+трафик (транспортный или рукопожатия).
+
+
+File: govpn.info,  Node: Что такое цензуроустойчивость,  Next: Когда нешифрованный режим,  Prev: Что такое анонимность,  Up: ЧАВО
+
+Что вы подразумеваете под цензуроустойчивостью?
+-----------------------------------------------
+
+Невозможность определить GoVPN ли это трафик или просто ‘cat
+/dev/urandom | nc somehost’.  Если вы не можете отличить один вид
+трафика от другого, то при цензуре ваше единственный вариант это
+заблокировать все его виды.
+
+
+File: govpn.info,  Node: Когда нешифрованный режим,  Next: Когда noise опцию,  Prev: Что такое цензуроустойчивость,  Up: ЧАВО
+
+Когда я должен использовать *note нешифрованный режим: Encless.?
+----------------------------------------------------------------
+
+Если вы работаете под юрисдикциями где суды могут привлечь вас к
+ответственности за использование шифрования или могут вынудить вас
+как-либо выдать ваши ключи шифрования (хотя сессионные ключи шифрования
+генерируются каждую сессию).  В большинстве случаев, эти суды не могут
+требовать аутентификационные ключи или ключи для ЭЦП.
+
+   *Не позволяйте* названию режима вас смутить: он всё-равно
+обеспечивает конфиденциальность и аутентичность передаваемых данных!  Но
+имейте в виду, что этот режим требователен к ресурсам и трафику и пока
+работает только в TCP режиме.
+
+   Если всё что не может быть прочитано кем-угодно считается
+шифрованием, то этот режим вам не поможет.  Представьте что вы говорите
+на другом иностранном языке или просто используете другую схему
+кодирования данных.
+
+
+File: govpn.info,  Node: Когда noise опцию,  Next: Когда синхронизацию времени,  Prev: Когда нешифрованный режим,  Up: ЧАВО
+
+Когда я должен использовать *note noise: Noise. опцию?
+------------------------------------------------------
+
+В большинстве случаев она вам не нужна без включённого *note постоянного
+по скорости трафика: CPR. (CPR). Без CPR и шума, в GoVPN трафике (так же
+как и в TLS, IPsec, SSH и других VPN протоколах) утекает информация о
+размерах и временных характеристиках пакетов нижележащего уровня.  Вы
+можете делать анализ трафика и предполагать что происходить в сети.  Без
+CPR опции вы можете только сказать в online ли кто или нет – ни больше,
+ни меньше.
+
+
+File: govpn.info,  Node: Когда синхронизацию времени,  Next: Можно ли DoS демона,  Prev: Когда noise опцию,  Up: ЧАВО
+
+Когда я должен использовать опцию *note синхронизации времени: Timesync.?
+-------------------------------------------------------------------------
+
+Без этой опции, если кто-либо перехватит первоначальный пакет
+рукопожатия от настоящего клиента, то он сможет его повторить и получить
+пакет рукопожатия от сервера в ответ.  Это может быть использовано для
+определения известен ли определённый пользователь серверу и то что мы
+имеем дело именно с GoVPN сервером.  Timesync опция заставляет добавлять
+временные штампы в пакеты рукопожатия, разрешая быть пакетам
+действительными только в указанном временном окне.  Если вы имеете более
+или менее синхронизированные часы между вашими клиентами и сервером, то
+можете всего использовать эту опцию.
+
+
+File: govpn.info,  Node: Можно ли DoS демона,  Next: Почему YAML,  Prev: Когда синхронизацию времени,  Up: ЧАВО
+
+Могу ли я сделать DoS (отказ в обслуживании) демона?
+----------------------------------------------------
+
+Каждый транспортный пакет первым делом аутентифицируется очень быстрым
+UMAC алгоритмом – в большинстве случаев потребление ресурсов TCP/UDP
+слоёв будет выше чем проверка UMAC. Каждое сообщение рукопожатия
+обрабатывается только если зашифрованный *note идентификатор: Identity.
+клиента найден: он использует быстрый PRP без потребления энтропии.
+
+
+File: govpn.info,  Node: Почему YAML,  Prev: Можно ли DoS демона,  Up: ЧАВО
+
+Почему YAML для конфигурации?
+-----------------------------
+
+Есть не так много хорошо известных форматов позволяющих комментировать,
+легко редактировать людьми (XML совсем не дружелюбен к человеку, JSON
+более менее).  Возможно самое важное свойство это шаблоны YAML: очень
+удобно сохранить много клиентов, имеющих схожие настройки, в одном
+конфигурационном файле.
+
+
+File: govpn.info,  Node: Новости,  Prev: ЧАВО,  Up: Русский
+
+Новости
+=======
+
+* Menu:
+
+* Релиз 5.7::
+* Релиз 5.6::
+* Релиз 5.5::
+* Релиз 5.4::
+* Релиз 5.3::
+* Релиз 5.2::
+* Релиз 5.1::
+* Релиз 5.0::
+* Релиз 4.2::
+* Релиз 4.1::
+* Релиз 4.0::
+* Релиз 3.5::
+* Релиз 3.4::
+* Релиз 3.3::
+* Релиз 3.2::
+* Релиз 3.1::
+* Релиз 3.0::
+* Релиз 2.4::
+* Релиз 2.3::
+* Релиз 2.2::
+* Релиз 2.1::
+* Релиз 2.0::
+* Релиз 1.5::
+* Релиз 1.4::
+* Релиз 1.3::
+* Релиз 1.1::
+* Релиз 1.0::
+
+
+File: govpn.info,  Node: Релиз 5.7,  Next: Релиз 5.6,  Up: Новости
+
+Релиз 5.7
+---------
+
+   • Имя TAP интерфейса и адрес удалённой стороны теперь передаются в
+     up- и down- скрипты через переменные окружения.
+   • Argon2 библиотека обновлена чтобы использовать 1.3 версию
+     алгоритма.
+
+
+File: govpn.info,  Node: Релиз 5.6,  Next: Релиз 5.5,  Prev: Релиз 5.7,  Up: Новости
+
+Релиз 5.6
+---------
+
+   • Добавлен up/down скрипт-пример для подмены маршрута по-умолчанию
+     (спасибо Zhuoyun Wei).
+   • Исправлена ошибка при генерировании документации: ‘.info’ файл не
+     устанавливался.
+
+
+File: govpn.info,  Node: Релиз 5.5,  Next: Релиз 5.4,  Prev: Релиз 5.6,  Up: Новости
+
+Релиз 5.5
+---------
+
+   • Возможность работы на 32-х битных платформах.  _sync/atomic_
+     библиотека имеет особенности из-за которых предыдущие версии
+     паниковали.
+
+
+File: govpn.info,  Node: Релиз 5.4,  Next: Релиз 5.3,  Prev: Релиз 5.5,  Up: Новости
+
+Релиз 5.4
+---------
+
+   • Добавлена возможность требования *note синхронизации времени:
+     Timesync.  Она добавит временные метки в PRP аутентификацию
+     сообщений рукопожатия, не позволяя повторить ранее перехваченные
+     пакеты и получить ответ от сервера, делая его видимым для DPI.
+
+
+File: govpn.info,  Node: Релиз 5.3,  Next: Релиз 5.2,  Prev: Релиз 5.4,  Up: Новости
+
+Релиз 5.3
+---------
+
+   • Исправлен небольшой баг связанный с тем что ‘newclient.sh’ ловил
+     "Passphrase:" приглашение и помещал его в примерный вывод YAML.
+     Просто заменил вывод приглашения ввода парольной фразы с stdout на
+     stderr.
+
+
+File: govpn.info,  Node: Релиз 5.2,  Next: Релиз 5.1,  Prev: Релиз 5.3,  Up: Новости
+
+Релиз 5.2
+---------
+
+   • Возможность ввода парольной фразы напрямую из терминала
+     (пользовательский ввод), без использования файлов с ключами.
+     Утилита ‘storekey.sh’ удалена.
+
+
+File: govpn.info,  Node: Релиз 5.1,  Next: Релиз 5.0,  Prev: Релиз 5.2,  Up: Новости
+
+Релиз 5.1
+---------
+
+   • Сервер конфигурируется через YAML (http://yaml.org/) файл.  Очень
+     удобно иметь комментарии и шаблоны, по сравнению с JSON.
+   • Несовместимая с предыдущими версиями замена функции _HSalsa20_ на
+     _BLAKE2b_ в коде рукопожатия.
+
+
+File: govpn.info,  Node: Релиз 5.0,  Next: Релиз 4.2,  Prev: Релиз 5.1,  Up: Новости
+
+Релиз 5.0
+---------
+
+   • Новый опциональный *note нешифрованный режим: Encless. работы.
+     Технически к исходящим пакетам не применяются функции шифрования,
+     поэтому вас не могут вынудить выдать ключи шифрования или привлечь
+     к ответственности за использования шифрования.
+   • *note MTU:: конфигурируются относительно каждого пользователя
+     отдельно.
+   • Упрощённая схема дополнения полезной нагрузки, экономия в один
+     байт.
+   • Возможность указать название TAP интерфейса явно, без использования
+     up-скриптов.
+   • ‘govpn-verifier’ утилита теперь может использовать *note EGD::.
+
+
+File: govpn.info,  Node: Релиз 4.2,  Next: Релиз 4.1,  Prev: Релиз 5.0,  Up: Новости
+
+Релиз 4.2
+---------
+
+   • Исправлена некритичная ошибка при которой сервер мог упасть если
+     скрипт запуска (up.sh) не выполнился успешно.
+
+
+File: govpn.info,  Node: Релиз 4.1,  Next: Релиз 4.0,  Prev: Релиз 4.2,  Up: Новости
+
+Релиз 4.1
+---------
+
+   • Вместо PBKDF2 используется Argon2d
+     (https://password-hashing.net/#argon2) алгоритм хэширования
+     паролей.
+   • Идентификатор клиента хранится внутри проверяльщика (verifier), тем
+     самым упрощая конфигурирование сервера и код.
+
+
+File: govpn.info,  Node: Релиз 4.0,  Next: Релиз 3.5,  Prev: Релиз 4.1,  Up: Новости
+
+Релиз 4.0
+---------
+
+   • Сообщения рукопожатия могут быть зашумлены: их длина скрывается.
+     Теперь они неотличимы от транспортных сообщений.
+   • Распараллеленная обработка клиентов на стороне сервера.
+   • Гораздо более высокая общая производительность.
+   • Конфигурирование сервера единственным JSON файлом.
+
+
+File: govpn.info,  Node: Релиз 3.5,  Next: Релиз 3.4,  Prev: Релиз 4.0,  Up: Новости
+
+Релиз 3.5
+---------
+
+   • Возможность использовать *note TCP: Network. сетевой транспорт.
+     Сервер можно слушать одновременно на UDP и TCP сокетах.
+   • Возможность использовать *note HTTP прокси: Proxy. (через CONNECT
+     метод) для доступа к серверу.  Сервер может эмулировать поведение
+     HTTP прокси.
+   • Обновлённая Poly1305 библиотека с исправлениями для ARM.
+   • Версия Go 1.5+ сильно рекомендуется из-за вопросов
+     производительности.
+
+
+File: govpn.info,  Node: Релиз 3.4,  Next: Релиз 3.3,  Prev: Релиз 3.5,  Up: Новости
+
+Релиз 3.4
+---------
+
+   • Возможность использовать внешний *note EGD:: совместимый PRNG.
+     Теперь вы можете использовать GoVPN даже на системах с плохим
+     ‘/dev/random’.
+   • Опция ‘-noncediff’ удалена.  Она заменена на хранилище уже
+     замеченных nonce-ов в памяти, тем самым полностью убирая
+     возможность атак перепроигрывания без потерь производительности
+     связанных с перетасовкой пакетов.
+
+
+File: govpn.info,  Node: Релиз 3.3,  Next: Релиз 3.2,  Prev: Релиз 3.4,  Up: Новости
+
+Релиз 3.3
+---------
+
+   • Совместимость со старым GNU Make 3.x.  Прежде только BSD Make и GNU
+     Make 4.x поддерживались.
+   • ‘/dev/urandom’ используется для правильного генерирования
+     идентификатора клиента под GNU/Linux системами.  Прежде,
+     ‘/dev/random’ мог выдать меньше ожидаемого количества данных.
+
+
+File: govpn.info,  Node: Релиз 3.2,  Next: Релиз 3.1,  Prev: Релиз 3.3,  Up: Новости
+
+Релиз 3.2
+---------
+
+   • Детерминированная сборка: коммиты исходного кода зависимых
+     библиотек фиксированы.
+   • Для сборки из исходного кода, соединение с Интернетом больше не
+     требуется: все зависимые библиотеки включены в tarball релизов.
+   • Совместимость с FreeBSD Make.  GNU Make не обязателен больше.
+
+
+File: govpn.info,  Node: Релиз 3.1,  Next: Релиз 3.0,  Prev: Релиз 3.2,  Up: Новости
+
+Релиз 3.1
+---------
+
+   • Публичные ключи Диффи-Хельмана кодируются алгоритмом Elligator
+     перед отправкой, делая их неотличимыми от случайных строчек,
+     предотвращая определение удачного подбора ключа дешифрования при
+     переборе паролей (используемых для создания DSA публичных ключей).
+     Однако это в среднем потребляет в два раза больше энтропии при
+     генерировании клюей DH.
+
+
+File: govpn.info,  Node: Релиз 3.0,  Next: Релиз 2.4,  Prev: Релиз 3.1,  Up: Новости
+
+Релиз 3.0
+---------
+
+   • EKE протокол заменён на Augmented-EKE и статичный симметричный (обе
+     стороны его имеют) pre-shared ключ заменён на верификатор на
+     стороне сервера.  Это требует на 64 байта больше трафика
+     рукопожатия, добавляет Ed25519 зависимость с соответствующими
+     расходами на подпись и проверку, PBKDF2 зависимость и вычисления на
+     стороне клиента.
+
+     A-EKE с PBKDF2 верификаторами устойчивы к атакам по словарю.  Можно
+     использовать легко запоминаемые человеком парольные фразы вместо
+     статичных ключей.  Верификаторы на стороне сервера не могут быть
+     использованы для аутентификации (скомпрометированный сервер не даст
+     возможность масксироваться под пользователя).
+
+   • Изменена структура транспортных сообщений: добавлена длина полезной
+     нагрузки.  Это увеличивает накладные расходы на два байта, но
+     сообщения сердцебиения стали меньше.
+
+   • Возможность скрывать размер полезной нагрузки за счёт добавления
+     шума, мусора во время передачи данных.  Каждый пакет дополняется до
+     максимального размера MTU.
+
+   • Возможность скрывать факты появления пакетов полезной нагрузки, за
+     счёт константного по скорости трафика.  Это также включает в себя
+     создание шума.
+
+   • Опции конфигурации ‘-timeout’, ‘-noncediff’, ‘-noise’, ‘-cpr’
+     настраиваются по-клиентно.
+
+
+File: govpn.info,  Node: Релиз 2.4,  Next: Релиз 2.3,  Prev: Релиз 3.0,  Up: Новости
+
+Релиз 2.4
+---------
+
+   • Возможность запуска встроенного HTTP-сервера отвечающего JSON-ом с
+     статистикой обо всех подключённых клиентах.
+   • Документация явно лицензирована под GNU FDL 1.3+.
+
+
+File: govpn.info,  Node: Релиз 2.3,  Next: Релиз 2.2,  Prev: Релиз 2.4,  Up: Новости
+
+Релиз 2.3
+---------
+
+   • Пакеты рукопожатия стали неотличимыми от случайных данных.  Теперь
+     весь GoVPN трафик это шум для человека по середине.
+
+   • Сообщения рукопожатия стали меньше (16% сокращения трафика).
+
+   • Злоумышленник не может создать обманных пакеты рукопожатия которые
+     заставят сервер генерировать приватный DH ключ, предотвращая
+     потребление энтропии и ресурсоёмкие вычисления.
+
+
+File: govpn.info,  Node: Релиз 2.2,  Next: Релиз 2.1,  Prev: Релиз 2.3,  Up: Новости
+
+Релиз 2.2
+---------
+
+   • Исправлены deadlock-и на некоторые каналы.
+
+
+File: govpn.info,  Node: Релиз 2.1,  Next: Релиз 2.0,  Prev: Релиз 2.2,  Up: Новости
+
+Релиз 2.1
+---------
+
+   • Восстановлена сборка под GNU/Linux системами.
+
+
+File: govpn.info,  Node: Релиз 2.0,  Next: Релиз 1.5,  Prev: Релиз 2.1,  Up: Новости
+
+Релиз 2.0
+---------
+
+   • Добавлена идентификация клиентов.
+   • Поддержка одновременно нескольких клиентов одним сервером.
+   • Скрипты up/down для каждого клиента.
+
+
+File: govpn.info,  Node: Релиз 1.5,  Next: Релиз 1.4,  Prev: Релиз 2.0,  Up: Новости
+
+Релиз 1.5
+---------
+
+   • Шифрование/обфусцирование nonce-ов.
+
+
+File: govpn.info,  Node: Релиз 1.4,  Next: Релиз 1.3,  Prev: Релиз 1.5,  Up: Новости
+
+Релиз 1.4
+---------
+
+   • Оптимизации производительности.
+
+
+File: govpn.info,  Node: Релиз 1.3,  Next: Релиз 1.1,  Prev: Релиз 1.4,  Up: Новости
+
+Релиз 1.3
+---------
+
+   • Возможность сердцебиения.
+   • Возможность пересогласования (rehandshake).
+   • Опциональные up/down скрипты.
+
+
+File: govpn.info,  Node: Релиз 1.1,  Next: Релиз 1.0,  Prev: Релиз 1.3,  Up: Новости
+
+Релиз 1.1
+---------
+
+   • Поддержка FreeBSD.
+
+
+File: govpn.info,  Node: Релиз 1.0,  Prev: Релиз 1.1,  Up: Новости
+
+Релиз 1.0
+---------
+
+   • Первый стабильный релиз.
+
+
+File: govpn.info,  Node: Installation,  Next: Precautions,  Prev: Русский,  Up: Top
+
+Installation
+************
+
+Possibly GoVPN already exists in your distribution:
+
+   • AUR (https://aur.archlinux.org/packages/govpn/)
+   • FreeBSD ports (http://www.freshports.org/security/govpn/)
+
+   GoVPN is written on Go (https://golang.org/) programming language and
+you have to install Go compiler (1.5+ version is highly recommended, 1.4
+is the minimal sufficient): ‘lang/go’ port in FreeBSD and ‘golang’
+package in most GNU/Linux distributions.  _Make_ (BSD and GNU ones are
+fine) is recommended for convenient building.  Texinfo
+(https://www.gnu.org/software/texinfo/) (6.1+ version is recommended) is
+used for building documentation.  Possibly you also need to install
+TUN/TAP interface utilities (depending on your operating system):
+‘uml-utilities’ package in most GNU/Linux distributions.
+
+   Included required libraries:
+
+Library                       Platform       Licence
+---------------------------------------------------------------------------
+‘github.com/agl/ed25519’      All            BSD 3-Clause
+‘github.com/bigeagle/water’   GNU/Linux      BSD 3-Clause
+‘github.com/dchest/blake2b’   All            CC0 1.0
+‘github.com/go-yaml/yaml’     All            LGPLv3 and MIT
+‘github.com/magical/argon2’   All            BSD 2-Clause
+‘golang.org/x/crypto’         All            BSD 3-Clause
+
+   Get *note the tarball: Tarballs, check its *note integrity and
+authenticity: Integrity. and run ‘make’.  _govpn-client_,
+_govpn-server_, _govpn-verifier_ binaries will be built in the current
+directory:
+
+% wget http://www.cypherpunks.ru/govpn/download/govpn-2.3.tar.xz
+% wget http://www.cypherpunks.ru/govpn/download/govpn-2.3.tar.xz.sig
+% gpg --verify govpn-2.3.tar.xz.sig govpn-2.3.tar.xz
+% tar xf govpn-2.3.tar.xz
+% make -C govpn-2.3 all
+
+   There is ‘install’ target respecting ‘DESTDIR’.  It will install
+binaries, info-documentation and utilities.
+
+* Menu:
+
+* Prepared tarballs: Tarballs.
+* Tarballs integrity check: Integrity.
+* Development source code: Sources.
+
+
+File: govpn.info,  Node: Tarballs,  Next: Integrity,  Up: Installation
+
+Prepared tarballs
+=================
+
+You can obtain releases source code prepared tarballs on
+<http://www.cypherpunks.ru/govpn/>.
+
+
+File: govpn.info,  Node: Integrity,  Next: Sources,  Prev: Tarballs,  Up: Installation
+
+Tarballs integrity check
+========================
+
+You *have to* verify downloaded archives integrity and check their
+signature to be sure that you have got trusted, untampered software.
+For integrity and authentication of downloaded binaries The GNU Privacy
+Guard (https://www.gnupg.org/) is used.  You must download signature
+(‘.sig’) provided with the tarball.
+
+   For the very first time you need to import signing public keys.  They
+are provided below, but be sure that you are reading them from the
+trusted source.  Alternatively check this page from *note other sources:
+Contacts. and look for the mailing list announcements.
+
+pub   rsa2048/0xF2F59045FFE2F4A1 2015-03-10
+uid   Sergey Matveev (GoVPN release signing key) <stargrave@stargrave.org>
+sub   rsa2048/0x3128EE3F8A6C750A 2015-03-10
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mQENBFT/H6cBCADTf/oqoTTBAA/CCQuYtzg8vrXxyjXj9yy4lTWqMSwgLXMm8br/
+kG0Jnk63oP3hggI3hm2mpuiNwpwrJiORLBZCe8JgZW71zG4LfhVpQeWd7fu8WxDx
+0uUZWByz5KcK8c/kNWNDpSkMmmqdE/8v0YDFbsz5U+ytp/Kki/gj3BCeIX3jYOL1
+fxczkv2okoU+aGYXt9z50VzheLUSRLzkkX8yNSpszqfB0LEEmUk8HO2fSS/bXwaY
+ZXX5//suH8V5hwq8vB8dHHCquZW6blyzcTa2KGIh6g2CmpypIQp/i5QAbzOCHKTM
+A1F7A1r0kYF2WfZOrycCfjUx3GA5B7sytuA3ABEBAAG0RFNlcmdleSBNYXR2ZWV2
+IChHb1ZQTiByZWxlYXNlIHNpZ25pbmcga2V5KSA8c3RhcmdyYXZlQHN0YXJncmF2
+ZS5vcmc+iQE8BBMBCAAmBQJU/x+nAhsDCAsKCQgHBAMCBxUKCQgLAwIFFgIBAwAC
+HgECF4AACgkQ8vWQRf/i9KEZ/AgAqYF/RRNwwhgLgFqTLfw3ha0FeiSso7H9ITDo
+cdJ/domLHaFvmwFIDQQKV8Zd1Rnj6xTCs2bq2O5hYMLrFZg85A9i5tLwkgFc9J5G
++8K3K/dh9Y4pArbM+craO+xydrwLyg1zlXCezthWbL0iXO/CuGiuBBCZJqRJ9HV4
+cZr4TRA3Znm5nt96rRsR86XqOgr0iOEDtYKfKW/IzDqOEgXUN5o2bUwuQawe9Y8d
+CngXzJcfb2eJ/TqSP9CxVWscjz4sAmD3/ECrHSjX7xsusIs46F2+VMlEXFuST52r
+zamfiGKlol8XvimUjKhlMWjqfdcJ0+jvFftsa7HXQUwRoQ1vJYheBBARCAAGBQJU
+/x/VAAoJEK4agQnkmFfvqn8A/ReK2ZZrnI9s0rzTsF1jrTZ1o5YowuINOzVMmLbE
+aYuGAP4iGwPgwVbANu4dWaP2N03oL4xFtmdaeNn3sB9ZqJOOyrkBDQRU/x+nAQgA
+uYBRyJVwhlE2SRIEmMggwr4gq1JBM2Ge5O46usf+YPUjCJKWoAj+MpQoq7r+oA/s
+E/6kGvWgngwV9prCdNkvcdwEWbb+n9PcMc2ZuIGRV3iOKYlYEBFV0bfM9zEV2jar
+1YQ+J/48UX7R00cYJuXel7Dy77V9eNd+Ukyowm93fggFlBDBGBjVbNtfIorHNYjB
+01CCu3i/8yxrMyFRvMKyAVEGp3obgmlam4DNkNIhFMv3du0tFnDFBsZf7N0kbLWI
+xEEJoc/jxaezDytQpUr3RhlMsLV6N/jjIZuy36QO1sbFeOe2to0E7ixaFzNCWsqY
+cxUfnJ3wi7hOiOwE2PF3tQARAQABiQEfBBgBCAAJBQJU/x+nAhsMAAoJEPL1kEX/
+4vShrVcIAKLUwMn7WgK6thmwPjdwP5V/jTlsWLWk2O/LEN4W/R0mw2hRsgRG/8Sz
+qlAP6vfl7ERaWuyL+fp72rKnGTGU9CEvn6PKmaG7bi4tGEvWXscNc10r0leIAP63
+pkQOa6Nyx2axJlJdSuTsYetd1ZgNpHNng+lxSUBlkPMOhPd/P/Ok7DShZjd2jhQ1
+jUbjWn+P7ARGEvgdd5utNjy/RaSwrLG8NXj3I+XuksG0/TPeG0zu9NOPzWZq9sCc
+5VbDNJTYtsMFs1etHE95Efmx6yUquQyB+g/HgvkH/LzthBawVVHxZNzzHgc6KN5w
+E0itJPXMaQL+juUfiNM0i2R1O8nJo14=
+=LJzj
+-----END PGP PUBLIC KEY BLOCK-----
+
+
+File: govpn.info,  Node: Sources,  Prev: Integrity,  Up: Installation
+
+Development source code
+=======================
+
+Development source code contains the latest version of the code.  It may
+be buggy.  It does not contain compiled documentation and dependent
+libraries source code.  Because of that, it is not recommended for
+porters: use *note Tarballs:: instead.
+
+   You can obtain it by cloning Git (http://git-scm.com/) repository
+(http://git.cypherpunks.ru/cgit.cgi/govpn.git/log/) and fetching
+dependent libraries source code as git submodules:
+
+% git clone git://git.cypherpunks.ru/govpn.git govpn
+% cd govpn
+% git checkout develop
+% git submodule update --init
+
+   Also there is mirror of dependent libraries for safety if their
+native repositories will be unavailable (they are seldom updated):
+
+Software/library                     Mirror
+--------------------------------------------------------------------------
+‘cypherpunks.ru/govpn’               <https://github.com/stargrave/govpn.git>
+‘github.com/agl/ed25519’             <git://git.cypherpunks.ru/ed25519.git>
+‘github.com/bigeagle/water’          <git://git.cypherpunks.ru/water.git>
+‘github.com/dchest/blake2b’          <git://git.cypherpunks.ru/blake2b.git>
+‘github.com/go-yaml/yaml’            <git://git.cypherpunks.ru/yaml.git>
+‘github.com/magical/argon2’          <git://git.cypherpunks.ru/argon2.git>
+‘golang.org/x/crypto’                <git://git.cypherpunks.ru/crypto.git>
+
+
+File: govpn.info,  Node: Precautions,  Next: User,  Prev: Installation,  Up: Top
+
+Precautions
+***********
+
+  1. We use passphrase authentication, so overall security fully depends
+     on its strength.  You *should* use long, high-entropy passphrases.
+     Also remember to keep passphrase in temporary file and read it
+     securely as described in *note verifier: Verifier.
+
+  2. You must *never* use the same key for multiple clients.
+
+  3. You must use *cryptographically good* pseudo random number
+     generator.  By default we use default ‘crypto/rand’ library that
+     reads ‘/dev/urandom’ source.  Some GNU/Linux and FreeBSD systems
+     are rather good with this entropy source.  Closed proprietary ones
+     are always not and you must use optional *note EGD:: feature with
+     them.
+
+
+File: govpn.info,  Node: User,  Next: Developer,  Prev: Precautions,  Up: Top
+
+User manual
+***********
+
+Announcements about updates and new releases can be found in *note
+contacts: Contacts.
+
+   GoVPN is split into two pieces: *note Client:: and *note Server::.
+Each of them work on top of *note UDP/TCP: Network. and TAP virtual
+network interfaces.  GoVPN is just a tunnelling of Ethernet frames,
+nothing less, nothing more.  All you IP-related network management is
+not touched by VPN at all.  You can automate it using up and down shell
+scripts.
+
+   What network performance can user expect?  For example single _Intel
+i5-2450M 2.5 GHz_ core on _FreeBSD 10.2 amd64_ with _Go 1.5.1_ gives 786
+Mbps (UDP transport) throughput.
+
+* Menu:
+
+* Glossary::
+* Client part: Client.
+* Server part: Server.
+* Example usage: Example.
+
+
+File: govpn.info,  Node: Glossary,  Next: Client,  Up: User
+
+Glossary
+========
+
+* Menu:
+
+* Entropy gathering daemon: EGD.
+* Identity::
+* Password Authenticated Key Agreement: PAKE.
+* Timeout::
+* Time synchronization: Timesync.
+* Network transport: Network.
+* Scripts::
+* Proxy::
+* Maximum Transmission Unit: MTU.
+* Statistics: Stats.
+* Noise::
+* Constant Packet Rate: CPR.
+* Encryptionless mode: Encless.
+* Verifier::
+
+
+File: govpn.info,  Node: EGD,  Next: Identity,  Up: Glossary
+
+Entropy Gathering Daemon
+------------------------
+
+Overall security mainly depends on client side: *note good passphrase:
+PAKE. and cryprographically good pseudo random number generator.
+
+   Some operating systems do not have good enough quality PRNG, bad
+‘/dev/urandom’.  You should use separate PRNG with them.  GoVPN
+communicates with them using Entropy Gathering Daemon
+(http://egd.sourceforge.net/) protocol.
+
+   To switch using EGD-compatible daemons instead of ‘crypto/rand’
+library you provide ‘-egd PATH’ command line option, where ‘PATH’ is the
+domain socket.
+
+% ./govpn-server [...] -egd /var/run/egd.sock
+
+
+File: govpn.info,  Node: Identity,  Next: PAKE,  Prev: EGD,  Up: Glossary
+
+Identity
+--------
+
+Client’s identity is 128-bit string.  It is not secret, so can be
+transmitted and stored in the clear.  However handshake applies PRP on
+it to make DPI and deanonymization much harder to success.  It is used
+as a salt in *note Verifier::.
+
+
+File: govpn.info,  Node: PAKE,  Next: Timeout,  Prev: Identity,  Up: Glossary
+
+Password Authenticated Key Agreement
+------------------------------------
+
+GoVPN uses strong password authentication.  That means that it uses
+human memorable *passphrases*, instead of some small high-entropy keys
+that must be carried with himself.  Passphrases differ from passwords:
+they are long string of low-entropy characters – they are easy to
+remember and can have high overall entropy.
+
+   Strong zero-knowledge authentication means that:
+
+   • compromising of passphrase files on either server or client sides
+     won’t allow attackers to masquerade himself the client;
+   • no need of protected secure storage on the server’s side to keep
+     keys in safety.
+
+   Passphrases are entered directly by the human on the client side.
+Server side stores pre-shared *note verifier: Verifier, containing
+dictionary attack resistant passphrase derivative.  Attacker can not use
+it to act as a client.
+
+
+File: govpn.info,  Node: Timeout,  Next: Timesync,  Prev: PAKE,  Up: Glossary
+
+Timeout
+-------
+
+Because of stateless UDP nature there is no way to reliably know if
+remote peer is alive.  That is why timeouts are necessary.  If no
+packets are sent during timeout period, then remote peer is considered
+to be dead.  Timeout option should be synchronized both for server and
+client.
+
+   If there were no packets at all during fourth part of timeout, then
+special heartbeat packet is sent.  So VPN connection should be alive all
+the time, even if there is no traffic in corresponding TAP interfaces.
+*Beware*: this consumes traffic.
+
+   Stale peers and handshake states are cleaned up every timeout period.
+
+   This applies to TCP connections too: relatively much time can pass
+until we understand that remote TCP peer is suddenly died and did not
+normally terminate connection.
+
+
+File: govpn.info,  Node: Timesync,  Next: Network,  Prev: Timeout,  Up: Glossary
+
+Time synchronization
+--------------------
+
+DPI systems can be active.  They could intercept first (assuming
+handshake) packets and repeat them again sooner.  Without the correct
+PRP-authentication, server won’t answer them, but repeated ones are
+still valid.  In that case DPI will get the answer from the server,
+probably without noise padding and understand that it is GoVPN server’s
+handshake packet.
+
+   Time synchronization requirement could be used for preventing this.
+Client and server clocks must be synced together more or less.  You
+enable it by specifying ‘-timesync’ option with allowable time accuracy
+(time window width) in seconds.
+
+   Each handshake’s packet PRP authentication just XORed with current
+timestamp rounded to ‘timesync’ number of seconds.  Timesync option is
+higher: less clock synchronization accuracy required, but bigger time
+window of possible packet repeating.
+
+
+File: govpn.info,  Node: Network,  Next: Scripts,  Prev: Timesync,  Up: Glossary
+
+Network transport
+-----------------
+
+You can use either UDP or TCP underlying network transport protocols.
+
+   TCP is more resource hungry.  Moreover because of packet loss and TCP
+reliability it can lead to "meltdown" effect: significant performance
+loss of underlying TCP connections.  Generally TCP is not advisable for
+VPNs, but it can help with some nasty firewalls.
+
+
+File: govpn.info,  Node: Scripts,  Next: Proxy,  Prev: Network,  Up: Glossary
+
+Scripts
+-------
+
+Up- and down- scripts used as a hook executed when connection is either
+established or lost.  Following environment variables are set during
+their execution:
+
+‘GOVPN_REMOTE’
+     Remote peer’s address.  In client mode it is server’s address.
+
+‘GOVPN_IFACE’
+     TAP interface name.  In server mode this can be empty: that means
+     that script must output its name as the first line to stdout.
+
+
+File: govpn.info,  Node: Proxy,  Next: MTU,  Prev: Scripts,  Up: Glossary
+
+Proxy
+-----
+
+You can proxy your requests through HTTP using CONNECT method.  This can
+help if you are only allowed to access outside world through HTTP proxy
+server.
+
+   Server has _-proxy_ option allowing to listen on specified port and
+accept HTTP request.  All of them will be treated as a CONNECT method
+switching to raw TCP mode.  You can make POST request and server will
+anyway switch to raw TCP mode.  You are not forced to use this option:
+any external HTTP proxy server can be used.
+
+   Client has _-proxy_ option forcing it to connect to proxy and send
+CONNECT method.  Optionally it can be authenticated on it using
+_-proxy-auth_ HTTP Basic method.
+
+% govpn-client [...] -proto tcp \
+    -remote "$REMOTE_ADDR":1194 \
+    -proxy 192.168.55.1:8888 \
+    -proxy-auth mylogin:password
+
+
+File: govpn.info,  Node: MTU,  Next: Stats,  Prev: Proxy,  Up: Glossary
+
+Maximum Transmission Unit
+-------------------------
+
+MTU option tells what maximum transmission unit is expected to get from
+TAP interface.  It is per-user configuration.  Incoming packets of
+bigger sizes (including the padding byte) will be ignored.  If either
+*note noise: Noise, *note encryptionless mode: Encless. or *note CPR::
+are enabled, then all outgoing packets are filled up to that MTU value.
+
+   Default MTU equals to 1514 bytes (1500 bytes of Ethernet payload, 14
+bytes of Ethernet header).
+
+
+File: govpn.info,  Node: Stats,  Next: Noise,  Prev: MTU,  Up: Glossary
+
+Statistics
+----------
+
+Both client and server has ability to show statistics about known
+connected peers.  You retrieve them by downloading JSON from built-in
+background HTTP-server.  You can enable it by specifying ‘-stats
+host:port’ argument.
+
+   Actually it is not full-fledged HTTP-server: it just accepts
+connection, reads from it (does not parse anything) and writes dummy
+headers with JSON document.
+
+% govpn-server [...] -stats "[::1]:5678"
+% curl http://localhost:5678/ | jq .
+[
+  {
+    "HeartbeatSent": 1,
+    "HeartbeatRecv": 2,
+    "FramesDup": 0,
+    "FramesUnauth": 0,
+    "Addr": {
+      "Zone": "igb1",
+      "Port": 12989,
+      "IP": "fe80::221:ccff:feb9:ba7f"
+    },
+    "Id": "stargrave",
+    "LastPing": "2015-04-30T22:05:49.426616166+03:00",
+    "LastSent": "2015-04-30T22:05:49.426704138+03:00",
+    "BytesIn": 1392774,
+    "BytesOut": 17228877,
+    "FramesIn": 12412,
+    "FramesOut": 16588
+  }
+]
+
+
+File: govpn.info,  Node: Noise,  Next: CPR,  Prev: Stats,  Up: Glossary
+
+Noise
+-----
+
+So-called noise is used to hide underlying payload packets length.
+Without it GoVPN provides confidentiality and authenticity of messages,
+but not their timestamps of appearance and sizes.
+
+   You may turn on ‘-noise’ option, that forces to fill up all outgoing
+packets to their maximum (MTU) size.  As it can be applied only to
+outgoing traffic, you should enable it on both sides in most cases.
+
+   Pay attention that this can dramatically *increase* your traffic!  It
+is turned off by default.
+
+
+File: govpn.info,  Node: CPR,  Next: Encless,  Prev: Noise,  Up: Glossary
+
+Constant Packet Rate
+--------------------
+
+Constant Packet Rate is used to hide fact of underlying payload packets
+appearance.  In this mode daemon inserts necessary dummy packets and
+delays other ones.
+
+   This mode is turned by ‘-cpr’ option, where you specify desired
+outgoing traffic rate in KiB/sec (kibibytes per second).  This option
+also *forces* using of the *note noise: Noise.!  It is turned off by
+default.
+
+
+File: govpn.info,  Node: Encless,  Next: Verifier,  Prev: CPR,  Up: Glossary
+
+Encryptionless mode
+-------------------
+
+Some jurisdictions can force user to reveal his encryption keys.
+However they can not ask for authentication (signing) keys.  So you are
+safe to use authentication algorithms, but not the encryption ones.
+Moreover some countries forbids usage of encryption (but again not the
+authentication).
+
+   GoVPN provides special encryptionless mode of operation.  In this
+mode it replaces Salsa20 function used for confidentiality with rather
+well-known Chaffing-and-Winnowing
+(http://people.csail.mit.edu/rivest/chaffing-980701.txt) (CnW)
+technology.  This is rather traffic and resource hungry algorithm, so we
+use it after All-Or-Nothing-Transformation
+(http://theory.lcs.mit.edu/~cis/pubs/rivest/fusion.ps) (based on Optimal
+Asymmetric Encryption Padding
+(http://cseweb.ucsd.edu/~mihir/papers/oaep.html)) on the data.  This is
+confidentiality preserving encoding.
+
+   AONT is just a keyless encoding of the data.  CnW uses only
+authentication function.  Handshake additionally uses Diffie-Hellman and
+signature algorithms.  No encryption and steganography involved.
+
+   In this mode each outgoing packet became larger on 4128 bytes and
+*note noise: Noise. is forcefully enabled.  So this is resource hungry
+mode!
+
+   *Beware*: by default packet serial numbers are still processed
+through the XTEA encryption.  It is not required for confidentiality and
+security, but for randomizing some parts of the traffic to make it
+indistinguishable from the noise, for making it more DPI-proof.  It
+safely can be disabled, turned off or maybe its keys even can be
+revealed without security and forward secrecy loss.
+
+   See ‘govpn/cnw’ and ‘govpn/aont’ packages for details of AONT and
+chaffing operations.
+
+
+File: govpn.info,  Node: Verifier,  Prev: Encless,  Up: Glossary
+
+Verifier
+--------
+
+Verifier is created using ‘govpn-verifier’ utility.
+
+% govpn-verifier
+Passphrase:[hello world]
+$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg
+
+   First line is the verifier for the server side.  Second line is for
+the client – it lacks generated public key.  However you can use
+server’s one on the client side too.
+
+   You can check passphrase against verifier by specifying ‘-verifier’
+option with the path to verifier file:
+
+% govpn-verifier -verifier '$argon2d...'
+Passphrase:[hello world]
+true
+
+   Optionally you can store plaintext passphrases on volatile memory
+(memory disk, encrypted filesystem with restrictive permissions to the
+file) and provide ‘-key’ option.
+
+
+File: govpn.info,  Node: Client,  Next: Server,  Prev: Glossary,  Up: User
+
+Client part
+===========
+
+Except for common *note -stats: Stats, *note -egd: EGD. options client
+has the following ones:
+
+‘-mtu’
+     Expected TAP interface *note MTU::.
+
+‘-proto’
+     *note Network protocol: Network. to use.  Can be either _udp_
+     (default) or _tcp_.
+
+‘-proxy’
+     Use specified _host:port_ *note Proxy:: server for accessing remote
+     server.
+
+‘-proxy-auth’
+     Optional _user:password_ for HTTP Basic authorization on proxy
+     server.
+
+‘-remote’
+     Address (‘host:port’ format) of remote server we need to connect
+     to.
+
+‘-iface’
+     TAP interface name.
+
+‘-verifier’
+     Our client’s *note Verifier::.
+
+‘-key’
+     Path to the file with the passphrase.  If omitted, then you will be
+     asked to enter it in the terminal.
+
+‘-timeout’
+     *note Timeout:: setting in seconds.
+
+‘-timesync’
+     Optional *note time synchronization: Timesync. requirement.  If set
+     to zero, then no synchronization required.
+
+‘-noise’
+     Enable *note Noise::.
+
+‘-cpr’
+     Set *note CPR:: in KiB/sec.
+
+‘-encless’
+     Enable *note encryptionless mode: Encless.
+
+‘-up’
+     Optional path to *note script: Scripts. that will be executed after
+     connection is established.  Interface name will be given to it as a
+     first argument.
+
+‘-down’
+     Same as ‘-up’ above, but it is executed when connection is lost,
+     when we exit.
+
+   Example up-script that calls DHCP client and IPv6 advertisement
+solicitation:
+
+client% cat > up.sh <<EOF
+#!/bin/sh
+dhclient $GOVPN_IFACE
+rtsol $GOVPN_IFACE
+EOF
+client% chmod +x up.sh
+
+
+File: govpn.info,  Node: Server,  Next: Example,  Prev: Client,  Up: User
+
+Server part
+===========
+
+Except for common *note -stats: Stats, *note -egd: EGD. options client
+has the following ones:
+
+‘-proto’
+     *note Network protocol: Network. to use.  Can be _udp_ (default),
+     _tcp_ or _all_.
+
+‘-bind’
+     Address (‘host:port’ format) we must bind to.
+
+‘-conf’
+     Path to YAML file with the configuration.
+
+‘-proxy’
+     Start trivial HTTP *note Proxy:: server on specified _host:port_.
+
+   Configuration file is YAML file with following example structure:
+
+stargrave: {                        <-- Peer human readable name
+    iface: tap10                    <-- OPTIONAL TAP interface name
+    mtu: 1514                       <-- OPTIONAL overriden MTU
+    up: ./stargrave-up.sh           <-- OPTIONAL up-script
+    down: ./stargrave-down.sh       <-- OPTIONAL down-script
+    timeout: 60                     <-- OPTIONAL overriden timeout
+    timesync: 0                     <-- OPTIONAL time synchronization requirement
+    noise: No                       <-- OPTIONAL noise enabler
+    cpr: 64                         <-- OPTIONAL constant packet rate, KiB/sec
+    encless: No                     <-- OPTIONAL Encryptionless mode
+    verifier: $argon2d...           <-- verifier received from client
+[...]
+
+   At least one of either ‘iface’ or ‘up’ must be specified.  If you
+specify ‘iface’, then it will be forcefully used to determine what TAP
+interface will be used.  If it is not specified, then up-*note script:
+Scripts. must output interface’s name to stdout (first output line).
+
+   For example up-script can be just ‘echo tap10’, or more advanced like
+the following one:
+
+#!/bin/sh
+$tap=$(ifconfig tap create)
+ifconfig $tap inet6 fc00::1/96 mtu 1412 up
+echo $tap
+
+   Each minute server rereads and refreshes peers configuration and adds
+newly appeared identities, deletes an obsolete ones.
+
+   You can use convenient ‘utils/newclient.sh’ script for new client
+creation:
+
+% ./utils/newclient.sh Alice
+[...]
+Your client verifier is: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg
+
+Place the following YAML configuration entry on the server's side:
+
+    Alice:
+        up: /path/to/up.sh
+        iface: or TAP interface name
+        verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+
+   Example configuration file:
+stargrave:
+    iface: tap0
+    verifier: $argon2d$m=4096,t=128,p=1$VMirzcshcHuG2V4jhUsEjw$X5fC07L8k61h3S1Oro/rC76+m0oGDTA9Bq+aWJ1uOgY
+slow:
+    iface: tap1
+    encless: Yes
+    mtu: 9000
+    cpr: 384
+    verifier: $argon2d$m=4096,t=128,p=1$YbIA5garDqCOhtI/2EZVNg$gOo5vcEGynmpeepNscwclicfZsWxzgYFRLbgG21EZ1U
+
+
+File: govpn.info,  Node: Example,  Prev: Server,  Up: User
+
+Example usage
+=============
+
+Let’s assume that there is some insecure link between your computer and
+WiFi-reachable gateway.
+
+   • You have got ‘wlan0’ NIC with 192.168.0/24 network on it.
+   • You want to create virtual encrypted and authenticated 172.16.0/24
+     network and use it as a default transport.
+   • Assume that outgoing GoVPN packets can be fragmented, so we do not
+     bother configuring MTU of TAP interfaces.  For better performance
+     just lower it and check that no fragmentation of outgoing UDP
+     packets occurs.
+
+   *Install*.  At first you must *note install: Installation. this
+software: download, *note check the signature: Integrity, compile.
+
+   *Prepare the client*.  Generate client’s verifier for Alice as an
+example:
+
+client% ./utils/newclient.sh Alice
+Passphrase:
+Your client verifier is: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg
+
+Place the following YAML configuration entry on the server's side:
+
+    Alice:
+        up: /path/to/up.sh
+        iface: or TAP interface name
+        verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+
+   *Prepare the server*.  Add this entry to ‘peers.yaml’ configuration
+file:
+
+Alice:
+    iface: tap10
+    verifier: $argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg$KCNIqfS4DGsBTtVytamAzcISgrlEWvNxan1UfBrFu10
+
+   *Prepare network on GNU/Linux IPv4 server*:
+
+server% ip addr add 192.168.0.1/24 dev wlan0
+server% ip tuntap add dev tap10 mode tap
+server% ip addr add 172.16.0.1/24 dev tap10
+server% ip link set up dev tap10
+
+   *Run server daemon itself*:
+
+server% govpn-server -bind 192.168.0.1:1194
+
+   *Prepare network on GNU/Linux IPv4 client*:
+
+client% ip addr add 192.168.0.2/24 dev wlan0
+client% ip tuntap add dev tap10 mode tap
+client% ip addr add 172.16.0.2/24 dev tap10
+client% ip link set up dev tap10
+client% ip route add 0/1 via 172.16.0.1
+client% ip route add 128/1 via 172.16.0.1
+
+   *Run client daemon itself*:
+client% govpn-client \
+    -verifier '$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg' \
+    -iface tap10 \
+    -remote 192.168.0.1:1194
+
+   *FreeBSD IPv6 similar client-server example*:
+
+server% ifconfig em0 inet6 fe80::1/64
+server% govpn-server -bind "fe80::1%em0"
+
+client% ifconfig me0 inet6 -ifdisabled auto_linklocal
+client% ifconfig tap10
+client% ifconfig tap10 inet6 fc00::2/96 up
+client% route -6 add default fc00::1
+client% govpn-client \
+    -verifier '$argon2d$m=4096,t=128,p=1$bwR5VjeCYIQaa8SeaI3rqg' \
+    -iface tap10 \
+    -remote "[fe80::1%me0]":1194
+
+
+File: govpn.info,  Node: Developer,  Next: Contacts,  Prev: User,  Up: Top
+
+Developer manual
+****************
+
+Pay attention how to get *note development source code: Sources.
+
+Nonce and identity encryption
+     XTEA (http://www.cix.co.uk/~klockstone/xtea.pdf).
+Data encryption
+     Salsa20 (http://cr.yp.to/snuffle.html).
+Message authentication
+     Poly1305 (http://cr.yp.to/mac.html).
+Password authenticated key agreement
+     DH-A-EKE powered by Curve25519 (http://cr.yp.to/ecdh.html) and
+     Ed25519 (http://ed25519.cr.yp.to/).
+DH elliptic-curve point encoding for public keys
+     Elligator (http://elligator.cr.yp.to/).
+Verifier password hashing algorithm
+     Argon2d (https://password-hashing.net/#argon2).
+Encryptionless confidentiality preserving encoding
+     Chaffing-and-Winnowing
+     (http://people.csail.mit.edu/rivest/chaffing-980701.txt) (two
+     Poly1305 MACs for each bit of message) over 128 bits of
+     All-Or-Nothing-Transformed
+     (http://theory.lcs.mit.edu/~cis/pubs/rivest/fusion.ps) (based on
+     OAEP (http://cseweb.ucsd.edu/~mihir/papers/oaep.html) using Salsa20
+     with BLAKE2b-256 (https://blake2.net/) based SAEP+
+     (http://crypto.stanford.edu/~dabo/abstracts/saep.html) checksums)
+     data with 128-bits of feeded random.
+Packet overhead
+     25 bytes per packet.  Plus 4128 bytes and noise in encryptionless
+     mode.
+Handshake overhead
+     4 UDP (2 from client, 2 from server) packets (round-trips for TCP).
+     264 bytes total payload, 20680 in encryptionless mode.
+Entropy required
+     832 bits in average on client, 832 bits in average on server side
+     per handshake.  128 bits for each outgoing packet in encryptionless
+     mode.
+
+* Menu:
+
+* Verifier structure::
+* Transport protocol: Transport.
+* Handshake protocol: Handshake.
+
+
+File: govpn.info,  Node: Verifier structure,  Next: Transport,  Up: Developer
+
+Verifier structure
+==================
+
+Verifier is a derivative of the password.  It is resistant to dictionary
+attacks and can not be used for authentication (only its verifying).
+
+SOURCE = Argon2d(m, t, p, SALT=PeerId, PASSWORD)
+PUB, PRIV = Ed25519.Generate(SOURCE)
+
+   Verifier is serialized representation of public data above:
+$argon2d$m=m,t=t,p=p$Base64(SALT)$Base64(PUB)
+
+   m, t and p parameters are Argon2d-specific: memory, iterations and
+parallelizm parameters.
+
+   Server stores and knows only verifier.  Client can compute the whole
+keypair every time he makes handshake.
+
+
+File: govpn.info,  Node: Transport,  Next: Handshake,  Prev: Verifier structure,  Up: Developer
+
+Transport protocol
+==================
+
+TAG || ENCRYPTED || NONCE --> PACKET
+ ^         ^          ^
+ |         |          |
+ |         |          +-------------+
+ |         |                        |
+ |         +-------------+          |
+ |                       |          |
+ +--< AUTH(AUTH_KEY, ENCRYPTED || NONCE)
+                         ^          ^
+                         |          |
++------------------------+          |
+|                                   |
+|                   +---------------+
+|                   |
++--< ENCRYPT(KEY, NONCE, PAYLOAD)
+                    ^       ^
+                    |       |
+                    |       +--< DATA || PAD [|| ZEROS]
+                    |
+                    +--< PRP(PRP_KEY, SERIAL)
+
+   ‘SERIAL’ is message’s serial number.  Odds are reserved for client
+(to server) messages, evens for server (to client) messages.
+
+   ‘PRP’ is XTEA block cipher algorithm used here as PRP (pseudo random
+permutation function) to obfuscate ‘SERIAL’.  Plaintext ‘SERIAL’ state
+is kept in peers internal state, but encrypted before transmission.
+
+   XTEA’s encryption key ‘PRP_KEY’ is the first 128-bit of Salsa20’s
+output with established common key and zero nonce (message nonces start
+from 1).
+
+PRP_KEY = 128bit(ENCRYPT(KEY, 0))
+
+   ‘ENCRYPT’ is Salsa20 stream cipher, with established session ‘KEY’
+and obfuscated ‘SERIAL’ used as a nonce.  512 bit of Salsa20’s output is
+ignored and only remaining is XORed with ther data, encrypting it.
+
+   ‘DATA’ is padded with ‘PAD’ (0x80 byte).  Optional ‘ZEROS’ may
+follow, to fill up packet to conceal payload packet length.
+
+   ‘AUTH’ is Poly1305 authentication function.  First 256 bits of
+Salsa20’s output are used as a one-time key for ‘AUTH’.
+
+AUTH_KEY = 256bit(ENCRYPT(KEY, NONCE))
+
+   To prevent replay attacks we must remember received ‘SERIAL’s and
+drop when receiving duplicate ones.
+
+   In *note encryptionless mode: Encless. this scheme is slightly
+different:
+
+ PACKET = ENCODED || NONCE
+ENCODED = ENCLESS(DATA || PAD || ZEROS)
+  NONCE = PRP(PRP_KEY, SERIAL)
+
+   ‘ENCLESS’ is AONT and chaffing function.  There is no need in
+explicit separate authentication.
+
+
+File: govpn.info,  Node: Handshake,  Prev: Transport,  Up: Developer
+
+Handshake protocol
+==================
+
+     ┌──────┐                                           ┌──────┐
+     │Client│                                           │Server│
+     └──┬───┘                                           └──┬───┘
+        │                                                  │
+        │                                  ╔═════════════╗ │
+════════╪══════════════════════════════════╣ Preparation ╠═╪═════════════════════════════════════════
+        │                                  ╚═════════════╝ │
+        │                                                  │
+        │────┐                                             │
+        │    │ R=rand(64bit)                               │
+        │<───┘                                             │
+        │                                                  │
+        │────┐                                             │
+        │    │ CDHPriv=rand(256bit)                        │
+        │<───┘                                             │
+        │                                                  │
+        │                                                  │
+        │                                  ╔═════════════╗ │
+════════╪══════════════════════════════════╣ Interaction ╠═╪═════════════════════════════════════════
+        │                                  ╚═════════════╝ │
+        │                                                  │
+        │         R, enc(H(DSAPub), R, El(CDHPub))         │
+        │ ─────────────────────────────────────────────────>
+        │                                                  │
+        │                                                  │────┐
+        │                                                  │    │ SDHPriv=rand(256bit)
+        │                                                  │<───┘
+        │                                                  │
+        │                                                  │────┐
+        │                                                  │    │ K=H(DH(SDHPriv, CDHPub))
+        │                                                  │<───┘
+        │                                                  │
+        │                                                  │────┐
+        │                                                  │    │ RS=rand(64bit)
+        │                                                  │<───┘
+        │                                                  │
+        │                                                  │────┐
+        │                                                  │    │ SS=rand(256bit)
+        │                                                  │<───┘
+        │                                                  │
+        │ enc(H(DSAPub), R+1, El(SDHPub)); enc(K, R, RS+SS)│
+        │ <─────────────────────────────────────────────────
+        │                                                  │
+        │────┐                                             │
+        │    │ K=H(DH(CDHPriv, SDHPub))                    │
+        │<───┘                                             │
+        │                                                  │
+        │────┐                                             │
+        │    │ RC=rand(64bit); SC=rand(256bit)             │
+        │<───┘                                             │
+        │                                                  │
+        │      enc(K, R+1, RS+RC+SC+Sign(DSAPriv, K))      │
+        │ ─────────────────────────────────────────────────>
+        │                                                  │
+        │                                                  │────┐
+        │                                                  │    │ compare(RS)
+        │                                                  │<───┘
+        │                                                  │
+        │                                                  │────┐
+        │                                                  │    │ Verify(DSAPub, Sign(DSAPriv, K), K)
+        │                                                  │<───┘
+        │                                                  │
+        │                  enc(K, R+2, RC)                 │
+        │ <─────────────────────────────────────────────────
+        │                                                  │
+        │                                                  │
+        │                                  ╔════════════╗  │
+════════╪══════════════════════════════════╣ Finalizing ╠══╪═════════════════════════════════════════
+        │                                  ╚════════════╝  │
+        │                                                  │
+        │────┐                                             │
+        │    │ compare(RC)                                 │
+        │<───┘                                             │
+        │                                                  │
+        │────┐                                             │
+        │    │ MasterKey=SS XOR SC                         │
+        │<───┘                                             │
+        │                                                  │
+        │                                                  │────┐
+        │                                                  │    │ MasterKey=SS XOR SC
+        │                                                  │<───┘
+        │                                                  │
+
+   Each handshake message ends with so called ‘IDtag’: it is an XTEA
+encrypted first 64 bits of each message with client’s *note Identity::
+as a key.  It is used to transmit identity and to mark packet as
+handshake message.
+
+   If *note noise: Noise. is enabled, then data is padded to fill up
+packet to MTU’s size.
+
+   *Preparation stage*:
+
+  1. Client knows only his identity and passphrase written somewhere in
+     the human readable form.  Server knows his identity and *note
+     verifier: Verifier structure.: ‘DSAPub’.
+  2. Client computes verifier which produces ‘DSAPriv’ and ‘DSAPub’.
+     ‘H()’ is _BLAKE2b-256_ hash function.
+  3. Client generates DH keypair: ‘CDHPub’ and ‘CDHPriv’.  Also it
+     generates random 64-bit ‘R’ that is used as a nonce for symmetric
+     encryption.  ‘El()’ is Elligator point encoding (and vice versa)
+     algorithm.
+
+   *Interaction stage*:
+
+  1. R + enc(H(DSAPub), R, El(CDHPub)) + IDtag -> Server [48 bytes]
+
+  2.    • Server remembers client address.
+        • Decrypts ‘El(CDHPub)’.
+        • Inverts ‘El()’ encoding and gets ‘CDHPub’.
+        • Generates DH keypair: ‘SDHPriv’/‘SDHPub’.
+        • Computes common shared key ‘K = H(DH(SDHPriv, CDHPub))’.
+        • Generates 64-bit random number ‘RS’.
+        • Generates 256-bit pre-master secret ‘SS’.
+
+  3. 
+     enc(H(DSAPub), R+1, El(SDHPub)) + enc(K, R, RS + SS) + IDtag -> Client
+     [80 bytes]
+
+  4.    • Client decrypts ‘El(SDHPub)’.
+        • Inverts ‘El()’ encoding and gets ‘SDHPub’.
+        • Computes ‘K’.
+        • Decrypts ‘RS’ and ‘SS’.
+        • Remembers ‘SS’.
+        • Generates 64-bit random number ‘RC’.
+        • Generates 256-bit pre-master secret ‘SC’.
+        • Signs with ‘DSAPriv’ key ‘K’.
+
+  5. enc(K, R+1, RS + RC + SC + Sign(DSAPriv, K)) + IDtag -> Server [120
+     bytes]
+
+  6.    • Server decrypts ‘RS’, ‘RC’, ‘SC’, ‘Sign(DSAPriv, K)’.
+
+        • Compares ‘RS’ with its own one sent before.  Server decrypts
+          ‘RS’, ‘RC’, ‘SC’ with key ‘K’, compares ‘RS’ with its own one
+          sent before.
+
+        • Verifies ‘K’ signature with verifier ‘DSAPub’.
+
+        • Computes final session encryption key: ‘MasterKey=SS XOR SC’.
+
+  7. ENC(K, R+2, RC) + IDtag -> Client [16 bytes]
+
+  8.    • Client decrypts ‘RC’
+        • Compares with its own one sent before.
+        • Computes final session encryption key as server did.
+
+   ‘MasterKey’ is high entropy 256-bit key.  ‘K’ DH-derived one has
+128-bit security margin and that is why are not in use except in
+handshake process.  ‘R*’ are required for handshake randomization and
+two-way authentication.
+
+   In *note encryptionless mode: Encless. each ‘enc()’ is replaced with
+AONT and chaffing function over the noised data.
+
+
+File: govpn.info,  Node: Contacts,  Next: Thanks,  Prev: Developer,  Up: Top
+
+Contacts
+********
+
+Please send questions regarding the use of GoVPN, bug reports and
+patches to govpn-devel
+(https://lists.cypherpunks.ru/pipermail/govpn-devel/) mailing list.
+Announcements also go to this mailing list.
+
+   Official website is <http://www.cypherpunks.ru/govpn/> (with
+<http://govpn.info/> alias), also available as Tor
+(https://www.torproject.org/) hidden service:
+<http://vabu56j2ep2rwv3b.onion/govpn/>.
+
+
+File: govpn.info,  Node: Thanks,  Next: Media,  Prev: Contacts,  Up: Top
+
+Thanks
+******
+
+Thanks for contributions and suggestions to:
+
+   • Applied Cryptography
+     (https://www.schneier.com/books/applied_cryptography/) © 1996 Bruce
+     Schneier.
+   • Strong Password-Only Authenticated Key Exchange
+     (http://tnlandforms.us/cns05/speke.pdf) © 1996 David P. Jablon.
+   • Augmented Encrypted Key Exchange
+     (https://www.cs.columbia.edu/~smb/papers/aeke.pdf): a
+     Password-Based Protocol Secure Against Dictionary Attacks and
+     Password File Compromise © Steven M. Belloving, Michael Merrit.
+   • Watson Ladd <watsonbladd@gmail.com> for suggestion of Elligator
+     (http://elligator.cr.yp.to/) encoding.
+   • Password Hashing Competition for Argon2
+     (https://password-hashing.net/#argon2).
+   • Chaffing and Winnowing: Confidentiality without Encryption
+     (http://people.csail.mit.edu/rivest/chaffing-980701.txt) © Ronald
+     L. Rivest
+   • Zhuoyun Wei <wzyboy@wzyboy.org> for AUR
+     (https://aur.archlinux.org/packages/govpn/) port maintaining and
+     his documentation related fixes.
+
+
+File: govpn.info,  Node: Media,  Next: Copying conditions,  Prev: Thanks,  Up: Top
+
+In the media
+************
+
+   • Реализуем безопасный VPN-протокол
+     (http://habrahabr.ru/company/ivi/blog/256365/) (on russian)
+   • Реализуем ещё более безопасный VPN-протокол
+     (http://habrahabr.ru/company/ivi/blog/257431/) (on russian)
+   • Установка и настройка безопасного VPN-демона GoVPN 3.2
+     (http://www.linuxspace.org/archives/9449) (on russian)
+
+
+File: govpn.info,  Node: Copying conditions,  Prev: Media,  Up: Top
+
+Copying conditions
+******************
+
+This manual is for GoVPN – simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+   Copyright © 2014-2016 Sergey Matveev <stargrave@stargrave.org>
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.3 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts.  A copy of the license is included in the
+     section entitled "Copying conditions".
+
+                GNU Free Documentation License
+                 Version 1.3, 3 November 2008
+
+
+ Copyright (C) 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc.
+     <http://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+0. PREAMBLE
+
+The purpose of this License is to make a manual, textbook, or other
+functional and useful document "free" in the sense of freedom: to
+assure everyone the effective freedom to copy and redistribute it,
+with or without modifying it, either commercially or noncommercially.
+Secondarily, this License preserves for the author and publisher a way
+to get credit for their work, while not being considered responsible
+for modifications made by others.
+
+This License is a kind of "copyleft", which means that derivative
+works of the document must themselves be free in the same sense.  It
+complements the GNU General Public License, which is a copyleft
+license designed for free software.
+
+We have designed this License in order to use it for manuals for free
+software, because free software needs free documentation: a free
+program should come with manuals providing the same freedoms that the
+software does.  But this License is not limited to software manuals;
+it can be used for any textual work, regardless of subject matter or
+whether it is published as a printed book.  We recommend this License
+principally for works whose purpose is instruction or reference.
+
+
+1. APPLICABILITY AND DEFINITIONS
+
+This License applies to any manual or other work, in any medium, that
+contains a notice placed by the copyright holder saying it can be
+distributed under the terms of this License.  Such a notice grants a
+world-wide, royalty-free license, unlimited in duration, to use that
+work under the conditions stated herein.  The "Document", below,
+refers to any such manual or work.  Any member of the public is a
+licensee, and is addressed as "you".  You accept the license if you
+copy, modify or distribute the work in a way requiring permission
+under copyright law.
+
+A "Modified Version" of the Document means any work containing the
+Document or a portion of it, either copied verbatim, or with
+modifications and/or translated into another language.
+
+A "Secondary Section" is a named appendix or a front-matter section of
+the Document that deals exclusively with the relationship of the
+publishers or authors of the Document to the Document's overall
+subject (or to related matters) and contains nothing that could fall
+directly within that overall subject.  (Thus, if the Document is in
+part a textbook of mathematics, a Secondary Section may not explain
+any mathematics.)  The relationship could be a matter of historical
+connection with the subject or with related matters, or of legal,
+commercial, philosophical, ethical or political position regarding
+them.
+
+The "Invariant Sections" are certain Secondary Sections whose titles
+are designated, as being those of Invariant Sections, in the notice
+that says that the Document is released under this License.  If a
+section does not fit the above definition of Secondary then it is not
+allowed to be designated as Invariant.  The Document may contain zero
+Invariant Sections.  If the Document does not identify any Invariant
+Sections then there are none.
+
+The "Cover Texts" are certain short passages of text that are listed,
+as Front-Cover Texts or Back-Cover Texts, in the notice that says that
+the Document is released under this License.  A Front-Cover Text may
+be at most 5 words, and a Back-Cover Text may be at most 25 words.
+
+A "Transparent" copy of the Document means a machine-readable copy,
+represented in a format whose specification is available to the
+general public, that is suitable for revising the document
+straightforwardly with generic text editors or (for images composed of
+pixels) generic paint programs or (for drawings) some widely available
+drawing editor, and that is suitable for input to text formatters or
+for automatic translation to a variety of formats suitable for input
+to text formatters.  A copy made in an otherwise Transparent file
+format whose markup, or absence of markup, has been arranged to thwart
+or discourage subsequent modification by readers is not Transparent.
+An image format is not Transparent if used for any substantial amount
+of text.  A copy that is not "Transparent" is called "Opaque".
+
+Examples of suitable formats for Transparent copies include plain
+ASCII without markup, Texinfo input format, LaTeX input format, SGML
+or XML using a publicly available DTD, and standard-conforming simple
+HTML, PostScript or PDF designed for human modification.  Examples of
+transparent image formats include PNG, XCF and JPG.  Opaque formats
+include proprietary formats that can be read and edited only by
+proprietary word processors, SGML or XML for which the DTD and/or
+processing tools are not generally available, and the
+machine-generated HTML, PostScript or PDF produced by some word
+processors for output purposes only.
+
+The "Title Page" means, for a printed book, the title page itself,
+plus such following pages as are needed to hold, legibly, the material
+this License requires to appear in the title page.  For works in
+formats which do not have any title page as such, "Title Page" means
+the text near the most prominent appearance of the work's title,
+preceding the beginning of the body of the text.
+
+The "publisher" means any person or entity that distributes copies of
+the Document to the public.
+
+A section "Entitled XYZ" means a named subunit of the Document whose
+title either is precisely XYZ or contains XYZ in parentheses following
+text that translates XYZ in another language.  (Here XYZ stands for a
+specific section name mentioned below, such as "Acknowledgements",
+"Dedications", "Endorsements", or "History".)  To "Preserve the Title"
+of such a section when you modify the Document means that it remains a
+section "Entitled XYZ" according to this definition.
+
+The Document may include Warranty Disclaimers next to the notice which
+states that this License applies to the Document.  These Warranty
+Disclaimers are considered to be included by reference in this
+License, but only as regards disclaiming warranties: any other
+implication that these Warranty Disclaimers may have is void and has
+no effect on the meaning of this License.
+
+2. VERBATIM COPYING
+
+You may copy and distribute the Document in any medium, either
+commercially or noncommercially, provided that this License, the
+copyright notices, and the license notice saying this License applies
+to the Document are reproduced in all copies, and that you add no
+other conditions whatsoever to those of this License.  You may not use
+technical measures to obstruct or control the reading or further
+copying of the copies you make or distribute.  However, you may accept
+compensation in exchange for copies.  If you distribute a large enough
+number of copies you must also follow the conditions in section 3.
+
+You may also lend copies, under the same conditions stated above, and
+you may publicly display copies.
+
+
+3. COPYING IN QUANTITY
+
+If you publish printed copies (or copies in media that commonly have
+printed covers) of the Document, numbering more than 100, and the
+Document's license notice requires Cover Texts, you must enclose the
+copies in covers that carry, clearly and legibly, all these Cover
+Texts: Front-Cover Texts on the front cover, and Back-Cover Texts on
+the back cover.  Both covers must also clearly and legibly identify
+you as the publisher of these copies.  The front cover must present
+the full title with all words of the title equally prominent and
+visible.  You may add other material on the covers in addition.
+Copying with changes limited to the covers, as long as they preserve
+the title of the Document and satisfy these conditions, can be treated
+as verbatim copying in other respects.
+
+If the required texts for either cover are too voluminous to fit
+legibly, you should put the first ones listed (as many as fit
+reasonably) on the actual cover, and continue the rest onto adjacent
+pages.
+
+If you publish or distribute Opaque copies of the Document numbering
+more than 100, you must either include a machine-readable Transparent
+copy along with each Opaque copy, or state in or with each Opaque copy
+a computer-network location from which the general network-using
+public has access to download using public-standard network protocols
+a complete Transparent copy of the Document, free of added material.
+If you use the latter option, you must take reasonably prudent steps,
+when you begin distribution of Opaque copies in quantity, to ensure
+that this Transparent copy will remain thus accessible at the stated
+location until at least one year after the last time you distribute an
+Opaque copy (directly or through your agents or retailers) of that
+edition to the public.
+
+It is requested, but not required, that you contact the authors of the
+Document well before redistributing any large number of copies, to
+give them a chance to provide you with an updated version of the
+Document.
+
+
+4. MODIFICATIONS
+
+You may copy and distribute a Modified Version of the Document under
+the conditions of sections 2 and 3 above, provided that you release
+the Modified Version under precisely this License, with the Modified
+Version filling the role of the Document, thus licensing distribution
+and modification of the Modified Version to whoever possesses a copy
+of it.  In addition, you must do these things in the Modified Version:
+
+A. Use in the Title Page (and on the covers, if any) a title distinct
+   from that of the Document, and from those of previous versions
+   (which should, if there were any, be listed in the History section
+   of the Document).  You may use the same title as a previous version
+   if the original publisher of that version gives permission.
+B. List on the Title Page, as authors, one or more persons or entities
+   responsible for authorship of the modifications in the Modified
+   Version, together with at least five of the principal authors of the
+   Document (all of its principal authors, if it has fewer than five),
+   unless they release you from this requirement.
+C. State on the Title page the name of the publisher of the
+   Modified Version, as the publisher.
+D. Preserve all the copyright notices of the Document.
+E. Add an appropriate copyright notice for your modifications
+   adjacent to the other copyright notices.
+F. Include, immediately after the copyright notices, a license notice
+   giving the public permission to use the Modified Version under the
+   terms of this License, in the form shown in the Addendum below.
+G. Preserve in that license notice the full lists of Invariant Sections
+   and required Cover Texts given in the Document's license notice.
+H. Include an unaltered copy of this License.
+I. Preserve the section Entitled "History", Preserve its Title, and add
+   to it an item stating at least the title, year, new authors, and
+   publisher of the Modified Version as given on the Title Page.  If
+   there is no section Entitled "History" in the Document, create one
+   stating the title, year, authors, and publisher of the Document as
+   given on its Title Page, then add an item describing the Modified
+   Version as stated in the previous sentence.
+J. Preserve the network location, if any, given in the Document for
+   public access to a Transparent copy of the Document, and likewise
+   the network locations given in the Document for previous versions
+   it was based on.  These may be placed in the "History" section.
+   You may omit a network location for a work that was published at
+   least four years before the Document itself, or if the original
+   publisher of the version it refers to gives permission.
+K. For any section Entitled "Acknowledgements" or "Dedications",
+   Preserve the Title of the section, and preserve in the section all
+   the substance and tone of each of the contributor acknowledgements
+   and/or dedications given therein.
+L. Preserve all the Invariant Sections of the Document,
+   unaltered in their text and in their titles.  Section numbers
+   or the equivalent are not considered part of the section titles.
+M. Delete any section Entitled "Endorsements".  Such a section
+   may not be included in the Modified Version.
+N. Do not retitle any existing section to be Entitled "Endorsements"
+   or to conflict in title with any Invariant Section.
+O. Preserve any Warranty Disclaimers.
+
+If the Modified Version includes new front-matter sections or
+appendices that qualify as Secondary Sections and contain no material
+copied from the Document, you may at your option designate some or all
+of these sections as invariant.  To do this, add their titles to the
+list of Invariant Sections in the Modified Version's license notice.
+These titles must be distinct from any other section titles.
+
+You may add a section Entitled "Endorsements", provided it contains
+nothing but endorsements of your Modified Version by various
+parties--for example, statements of peer review or that the text has
+been approved by an organization as the authoritative definition of a
+standard.
+
+You may add a passage of up to five words as a Front-Cover Text, and a
+passage of up to 25 words as a Back-Cover Text, to the end of the list
+of Cover Texts in the Modified Version.  Only one passage of
+Front-Cover Text and one of Back-Cover Text may be added by (or
+through arrangements made by) any one entity.  If the Document already
+includes a cover text for the same cover, previously added by you or
+by arrangement made by the same entity you are acting on behalf of,
+you may not add another; but you may replace the old one, on explicit
+permission from the previous publisher that added the old one.
+
+The author(s) and publisher(s) of the Document do not by this License
+give permission to use their names for publicity for or to assert or
+imply endorsement of any Modified Version.
+
+
+5. COMBINING DOCUMENTS
+
+You may combine the Document with other documents released under this
+License, under the terms defined in section 4 above for modified
+versions, provided that you include in the combination all of the
+Invariant Sections of all of the original documents, unmodified, and
+list them all as Invariant Sections of your combined work in its
+license notice, and that you preserve all their Warranty Disclaimers.
+
+The combined work need only contain one copy of this License, and
+multiple identical Invariant Sections may be replaced with a single
+copy.  If there are multiple Invariant Sections with the same name but
+different contents, make the title of each such section unique by
+adding at the end of it, in parentheses, the name of the original
+author or publisher of that section if known, or else a unique number.
+Make the same adjustment to the section titles in the list of
+Invariant Sections in the license notice of the combined work.
+
+In the combination, you must combine any sections Entitled "History"
+in the various original documents, forming one section Entitled
+"History"; likewise combine any sections Entitled "Acknowledgements",
+and any sections Entitled "Dedications".  You must delete all sections
+Entitled "Endorsements".
+
+
+6. COLLECTIONS OF DOCUMENTS
+
+You may make a collection consisting of the Document and other
+documents released under this License, and replace the individual
+copies of this License in the various documents with a single copy
+that is included in the collection, provided that you follow the rules
+of this License for verbatim copying of each of the documents in all
+other respects.
+
+You may extract a single document from such a collection, and
+distribute it individually under this License, provided you insert a
+copy of this License into the extracted document, and follow this
+License in all other respects regarding verbatim copying of that
+document.
+
+
+7. AGGREGATION WITH INDEPENDENT WORKS
+
+A compilation of the Document or its derivatives with other separate
+and independent documents or works, in or on a volume of a storage or
+distribution medium, is called an "aggregate" if the copyright
+resulting from the compilation is not used to limit the legal rights
+of the compilation's users beyond what the individual works permit.
+When the Document is included in an aggregate, this License does not
+apply to the other works in the aggregate which are not themselves
+derivative works of the Document.
+
+If the Cover Text requirement of section 3 is applicable to these
+copies of the Document, then if the Document is less than one half of
+the entire aggregate, the Document's Cover Texts may be placed on
+covers that bracket the Document within the aggregate, or the
+electronic equivalent of covers if the Document is in electronic form.
+Otherwise they must appear on printed covers that bracket the whole
+aggregate.
+
+
+8. TRANSLATION
+
+Translation is considered a kind of modification, so you may
+distribute translations of the Document under the terms of section 4.
+Replacing Invariant Sections with translations requires special
+permission from their copyright holders, but you may include
+translations of some or all Invariant Sections in addition to the
+original versions of these Invariant Sections.  You may include a
+translation of this License, and all the license notices in the
+Document, and any Warranty Disclaimers, provided that you also include
+the original English version of this License and the original versions
+of those notices and disclaimers.  In case of a disagreement between
+the translation and the original version of this License or a notice
+or disclaimer, the original version will prevail.
+
+If a section in the Document is Entitled "Acknowledgements",
+"Dedications", or "History", the requirement (section 4) to Preserve
+its Title (section 1) will typically require changing the actual
+title.
+
+
+9. TERMINATION
+
+You may not copy, modify, sublicense, or distribute the Document
+except as expressly provided under this License.  Any attempt
+otherwise to copy, modify, sublicense, or distribute it is void, and
+will automatically terminate your rights under this License.
+
+However, if you cease all violation of this License, then your license
+from a particular copyright holder is reinstated (a) provisionally,
+unless and until the copyright holder explicitly and finally
+terminates your license, and (b) permanently, if the copyright holder
+fails to notify you of the violation by some reasonable means prior to
+60 days after the cessation.
+
+Moreover, your license from a particular copyright holder is
+reinstated permanently if the copyright holder notifies you of the
+violation by some reasonable means, this is the first time you have
+received notice of violation of this License (for any work) from that
+copyright holder, and you cure the violation prior to 30 days after
+your receipt of the notice.
+
+Termination of your rights under this section does not terminate the
+licenses of parties who have received copies or rights from you under
+this License.  If your rights have been terminated and not permanently
+reinstated, receipt of a copy of some or all of the same material does
+not give you any rights to use it.
+
+
+10. FUTURE REVISIONS OF THIS LICENSE
+
+The Free Software Foundation may publish new, revised versions of the
+GNU Free Documentation License from time to time.  Such new versions
+will be similar in spirit to the present version, but may differ in
+detail to address new problems or concerns.  See
+http://www.gnu.org/copyleft/.
+
+Each version of the License is given a distinguishing version number.
+If the Document specifies that a particular numbered version of this
+License "or any later version" applies to it, you have the option of
+following the terms and conditions either of that specified version or
+of any later version that has been published (not as a draft) by the
+Free Software Foundation.  If the Document does not specify a version
+number of this License, you may choose any version ever published (not
+as a draft) by the Free Software Foundation.  If the Document
+specifies that a proxy can decide which future versions of this
+License can be used, that proxy's public statement of acceptance of a
+version permanently authorizes you to choose that version for the
+Document.
+
+11. RELICENSING
+
+"Massive Multiauthor Collaboration Site" (or "MMC Site") means any
+World Wide Web server that publishes copyrightable works and also
+provides prominent facilities for anybody to edit those works.  A
+public wiki that anybody can edit is an example of such a server.  A
+"Massive Multiauthor Collaboration" (or "MMC") contained in the site
+means any set of copyrightable works thus published on the MMC site.
+
+"CC-BY-SA" means the Creative Commons Attribution-Share Alike 3.0
+license published by Creative Commons Corporation, a not-for-profit
+corporation with a principal place of business in San Francisco,
+California, as well as future copyleft versions of that license
+published by that same organization.
+
+"Incorporate" means to publish or republish a Document, in whole or in
+part, as part of another Document.
+
+An MMC is "eligible for relicensing" if it is licensed under this
+License, and if all works that were first published under this License
+somewhere other than this MMC, and subsequently incorporated in whole or
+in part into the MMC, (1) had no cover texts or invariant sections, and
+(2) were thus incorporated prior to November 1, 2008.
+
+The operator of an MMC Site may republish an MMC contained in the site
+under CC-BY-SA on the same site at any time before August 1, 2009,
+provided the MMC is eligible for relicensing.
+
+
+ADDENDUM: How to use this License for your documents
+
+To use this License in a document you have written, include a copy of
+the License in the document and put the following copyright and
+license notices just after the title page:
+
+    Copyright (c)  YEAR  YOUR NAME.
+    Permission is granted to copy, distribute and/or modify this document
+    under the terms of the GNU Free Documentation License, Version 1.3
+    or any later version published by the Free Software Foundation;
+    with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+    A copy of the license is included in the section entitled "GNU
+    Free Documentation License".
+
+If you have Invariant Sections, Front-Cover Texts and Back-Cover Texts,
+replace the "with...Texts." line with this:
+
+    with the Invariant Sections being LIST THEIR TITLES, with the
+    Front-Cover Texts being LIST, and with the Back-Cover Texts being LIST.
+
+If you have Invariant Sections without Cover Texts, or some other
+combination of the three, merge those two alternatives to suit the
+situation.
+
+If your document contains nontrivial examples of program code, we
+recommend releasing these examples in parallel under your choice of
+free software license, such as the GNU General Public License,
+to permit their use in free software.
+
+
+
+Tag Table:
+Node: Top683
+Node: FAQ4122
+Node: Why not TLS5232
+Node: Why not SSH5535
+Node: Why not IPsec5885
+Node: Why Go6119
+Node: Why passphrases6638
+Node: Why manual network configuration7084
+Node: Why no proprietary OS support7588
+Node: What is perfect forward secrecy8058
+Node: What is anonymity8463
+Node: What is censorship resistance8822
+Node: When encryptionless mode9266
+Node: When noise option10243
+Node: When timesync option10873
+Node: Can I DoS daemon11636
+Node: Why YAML12146
+Node: News12576
+Node: Release 5.713161
+Node: Release 5.613450
+Node: Release 5.513725
+Node: Release 5.413980
+Node: Release 5.314336
+Node: Release 5.214641
+Node: Release 5.114905
+Node: Release 5.015273
+Node: Release 4.215915
+Node: Release 4.116131
+Node: Release 4.016484
+Node: Release 3.516884
+Node: Release 3.417413
+Node: Release 3.317965
+Node: Release 3.218382
+Node: Release 3.118806
+Node: Release 3.019289
+Node: Release 2.420662
+Node: Release 2.321010
+Node: Release 2.221516
+Node: Release 2.121682
+Node: Release 2.021836
+Node: Release 1.522080
+Node: Release 1.422234
+Node: Release 1.322385
+Node: Release 1.122595
+Node: Release 1.022736
+Node: Русский22864
+Node: О демоне23124
+Node: ЧАВО28446
+Node: Почему не TLS30391
+Node: Почему не SSH30940
+Node: Почему не IPsec31577
+Node: Почему Go31989
+Node: Почему парольные фразы32873
+Node: Почему ручная настройка сети33647
+Node: Почему нет поддержки проприетарных ОС34423
+Node: Что такое PFS35216
+Node: Что такое анонимность35975
+Node: Что такое цензуроустойчивость36526
+Node: Когда нешифрованный режим37245
+Node: Когда noise опцию39038
+Node: Когда синхронизацию времени40121
+Node: Можно ли DoS демона41569
+Node: Почему YAML42491
+Node: Новости43221
+Node: Релиз 5.743849
+Node: Релиз 5.644304
+Node: Релиз 5.544759
+Node: Релиз 5.445146
+Node: Релиз 5.345748
+Node: Релиз 5.246245
+Node: Релиз 5.146664
+Node: Релиз 5.047185
+Node: Релиз 4.248322
+Node: Релиз 4.148670
+Node: Релиз 4.049187
+Node: Релиз 3.549855
+Node: Релиз 3.450699
+Node: Релиз 3.351491
+Node: Релиз 3.252102
+Node: Релиз 3.152746
+Node: Релиз 3.053537
+Node: Релиз 2.455959
+Node: Релиз 2.356396
+Node: Релиз 2.257221
+Node: Релиз 2.157436
+Node: Релиз 2.057657
+Node: Релиз 1.558051
+Node: Релиз 1.458257
+Node: Релиз 1.358462
+Node: Релиз 1.158789
+Node: Релиз 1.058961
+Node: Installation59128
+Node: Tarballs61257
+Node: Integrity61462
+Node: Sources64222
+Node: Precautions65706
+Node: User66514
+Node: Glossary67340
+Node: EGD67761
+Node: Identity68459
+Node: PAKE68797
+Node: Timeout69794
+Node: Timesync70672
+Node: Network71668
+Node: Scripts72125
+Node: Proxy72631
+Node: MTU73503
+Node: Stats74084
+Node: Noise75085
+Node: CPR75675
+Node: Encless76176
+Node: Verifier77997
+Node: Client78869
+Node: Server80560
+Node: Example83299
+Node: Developer85904
+Node: Verifier structure87696
+Node: Transport88363
+Node: Handshake90694
+Node: Contacts100867
+Node: Thanks101370
+Node: Media102501
+Node: Copying conditions103057
+
+End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:

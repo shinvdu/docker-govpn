@@ -1,0 +1,36 @@
+@node Stats
+@subsection Statistics
+
+Both client and server has ability to show statistics about known
+connected peers. You retrieve them by downloading JSON from built-in
+background HTTP-server. You can enable it by specifying
+@option{-stats host:port} argument.
+
+Actually it is not full-fledged HTTP-server: it just accepts connection,
+reads from it (does not parse anything) and writes dummy headers with
+JSON document.
+
+@verbatim
+% govpn-server [...] -stats "[::1]:5678"
+% curl http://localhost:5678/ | jq .
+[
+  {
+    "HeartbeatSent": 1,
+    "HeartbeatRecv": 2,
+    "FramesDup": 0,
+    "FramesUnauth": 0,
+    "Addr": {
+      "Zone": "igb1",
+      "Port": 12989,
+      "IP": "fe80::221:ccff:feb9:ba7f"
+    },
+    "Id": "stargrave",
+    "LastPing": "2015-04-30T22:05:49.426616166+03:00",
+    "LastSent": "2015-04-30T22:05:49.426704138+03:00",
+    "BytesIn": 1392774,
+    "BytesOut": 17228877,
+    "FramesIn": 12412,
+    "FramesOut": 16588
+  }
+]
+@end verbatim

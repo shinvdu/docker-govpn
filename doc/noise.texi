@@ -1,0 +1,13 @@
+@node Noise
+@subsection Noise
+
+So-called noise is used to hide underlying payload packets length.
+Without it GoVPN provides confidentiality and authenticity of messages,
+but not their timestamps of appearance and sizes.
+
+You may turn on @option{-noise} option, that forces to fill up all
+outgoing packets to their maximum (MTU) size. As it can be applied only
+to outgoing traffic, you should enable it on both sides in most cases.
+
+Pay attention that this can dramatically @strong{increase} your traffic!
+It is turned off by default.

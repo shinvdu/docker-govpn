@@ -1,0 +1,20 @@
+@node Precautions
+@unnumbered Precautions
+
+@enumerate
+@item
+We use passphrase authentication, so overall security fully depends on
+its strength. You @strong{should} use long, high-entropy passphrases.
+Also remember to keep passphrase in temporary file and read it securely
+as described in @ref{Verifier, verifier}.
+
+@item
+You must @strong{never} use the same key for multiple clients.
+
+@item
+You must use @strong{cryptographically good} pseudo random number
+generator. By default we use default @code{crypto/rand} library that
+reads @file{/dev/urandom} source. Some GNU/Linux and FreeBSD systems
+are rather good with this entropy source. Closed proprietary ones are
+always not and you must use optional @ref{EGD} feature with them.
+@end enumerate

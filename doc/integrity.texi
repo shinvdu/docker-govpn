@@ -1,0 +1,15 @@
+@node Integrity
+@section Tarballs integrity check
+
+You @strong{have to} verify downloaded archives integrity and check
+their signature to be sure that you have got trusted, untampered
+software. For integrity and authentication of downloaded binaries
+@url{https://www.gnupg.org/, The GNU Privacy Guard} is used. You must
+download signature (@file{.sig}) provided with the tarball.
+
+For the very first time you need to import signing public keys. They
+are provided below, but be sure that you are reading them from the
+trusted source. Alternatively check this page from
+@ref{Contacts, other sources} and look for the mailing list announcements.
+
+@verbatiminclude pubkey.txt

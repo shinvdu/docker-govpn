@@ -1,0 +1,36 @@
+@node Encless
+@subsection Encryptionless mode
+
+Some jurisdictions can force user to reveal his encryption keys. However
+they can not ask for authentication (signing) keys. So you are safe to
+use authentication algorithms, but not the encryption ones. Moreover
+some countries forbids usage of encryption (but again not the
+authentication).
+
+GoVPN provides special encryptionless mode of operation. In this mode it
+replaces Salsa20 function used for confidentiality with rather
+well-known @url{http://people.csail.mit.edu/rivest/chaffing-980701.txt,
+Chaffing-and-Winnowing} (CnW) technology. This is rather traffic and
+resource hungry algorithm, so we use it after
+@url{http://theory.lcs.mit.edu/~cis/pubs/rivest/fusion.ps,
+All-Or-Nothing-Transformation} (based on
+@url{http://cseweb.ucsd.edu/~mihir/papers/oaep.html, Optimal Asymmetric
+Encryption Padding}) on the data. This is confidentiality preserving
+encoding.
+
+AONT is just a keyless encoding of the data. CnW uses only
+authentication function. Handshake additionally uses Diffie-Hellman and
+signature algorithms. No encryption and steganography involved.
+
+In this mode each outgoing packet became larger on 4128 bytes and
+@ref{Noise, noise} is forcefully enabled. So this is resource hungry mode!
+
+@strong{Beware}: by default packet serial numbers are still processed
+through the XTEA encryption. It is not required for confidentiality and
+security, but for randomizing some parts of the traffic to make it
+indistinguishable from the noise, for making it more DPI-proof. It
+safely can be disabled, turned off or maybe its keys even can be
+revealed without security and forward secrecy loss.
+
+See @code{govpn/cnw} and @code{govpn/aont} packages for details of AONT
+and chaffing operations.

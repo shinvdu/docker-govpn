@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GoVPN - simple free software virtual private network
+daemon, aimed to be reviewable, secure, DPI/censorship-resistant,
+written on Go.
+
+Copyright (C) 2014-2016 Sergey Matveev
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled "Copying conditions". -->
+<!-- Created by GNU Texinfo 6.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>GoVPN: PAKE</title>
+
+<meta name="description" content="GoVPN: PAKE">
+<meta name="keywords" content="GoVPN: PAKE">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="date" content="March 13, 2016">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="Glossary.html#Glossary" rel="up" title="Glossary">
+<link href="Timeout.html#Timeout" rel="next" title="Timeout">
+<link href="Identity.html#Identity" rel="prev" title="Identity">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+body {
+    margin: auto;
+    max-width: 800px;
+    background-color: #AEBECE;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1, h2, h3, h4, strong {
+    color: #900090;
+}
+
+pre {
+    background-color: #CCCCCC;
+}
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="PAKE"></a>
+<div class="header">
+<p>
+Next: <a href="Timeout.html#Timeout" accesskey="n" rel="next">Timeout</a>, Previous: <a href="Identity.html#Identity" accesskey="p" rel="prev">Identity</a>, Up: <a href="Glossary.html#Glossary" accesskey="u" rel="up">Glossary</a> &nbsp; </p>
+</div>
+<hr>
+<a name="Password-Authenticated-Key-Agreement"></a>
+<h4 class="subsection">Password Authenticated Key Agreement</h4>
+
+<p>GoVPN uses strong password authentication. That means that it uses human
+memorable <strong>passphrases</strong>, instead of some small high-entropy keys
+that must be carried with himself. Passphrases differ from passwords:
+they are long string of low-entropy characters &ndash; they are easy to
+remember and can have high overall entropy.
+</p>
+<p>Strong zero-knowledge authentication means that:
+</p>
+<ul>
+<li> compromising of passphrase files on either server or client sides
+won&rsquo;t allow attackers to masquerade himself the client;
+</li><li> no need of protected secure storage on the server&rsquo;s side to keep
+keys in safety.
+</li></ul>
+
+<p>Passphrases are entered directly by the human on the client side. Server
+side stores pre-shared <a href="Verifier.html#Verifier">verifier</a>, containing dictionary
+attack resistant passphrase derivative. Attacker can not use it to act
+as a client.
+</p>
+
+
+</body>
+</html>
