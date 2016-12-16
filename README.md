@@ -9,15 +9,20 @@ Its size is just 30MB.  small enough?
 
 # How to run it
 
+```
 $: docker pull govpn
 $: docker run -it --rm --device=/dev/net/tun:/dev/net/tun -p 1194:1194/udp  --cap-add=NET_ADMIN  govpn
+```
 
+make sure to use custom setting in VOLUME ["/etc/govpn"], just mount. 
 
-make sure to use custom setting in VOLUME ["/etc/govpn"]. 
-
-$: docker run -it --rm --device=/dev/net/tun:/dev/net/tun -p 1194:1194/udp -v /etc/govpn:/etc/govpn  --cap-add=NET_ADMIN  govpn
-
-
+```
+$: docker run -it --rm \
+   --device=/dev/net/tun:/dev/net/tun \
+   -p 1194:1194/udp \
+   -v /etc/govpn:/etc/govpn  \
+   --cap-add=NET_ADMIN  govpn
+```
 
 # How to create your own auth key?
 
@@ -36,6 +41,7 @@ Place the following YAML configuration entry on the server's side:
         verifier: $argon2d$m=4096,t=128,p=1$ns8qW3Sru5hq3V35LYioug$rWRXMDzSaa1IXYMVNRM4lPlJ929fkbjhorudL6iRc9I
 
 ```
+
 get the verifier, and replace the default one in config/peers.yaml. This is the only step you need to do. 
 
 
@@ -51,22 +57,33 @@ ip link set up dev tap14
 ```
 
 2. create a file hold the pass
-echo 'govpn' > /usr/local/src/govpn-5.7/key.txt
+```$: echo 'govpn' > /usr/local/src/govpn-5.7/key.txt```
+
+govpn is is pass I just type. 
 
 3. connect. 
 
-$: sudo ./govpn-client -verifier  '$argon2d$m=4096,t=128,p=1$B4GsJkH/T+BG0/iOUkkt/w$GOEZuuAuucwIIX8zKUzYPeVdQxJpudO3jB1rv1rjztk'  -iface [tap14]  -remote [public ip]:1194  -key  /usr/local/src/govpn-5.7/key.txt
+```
+$: sudo ./govpn-client -verifier  '$argon2d$m=4096,t=128,p=1$B4GsJkH/T+BG0/iOUkkt/w$GOEZuuAuucwIIX8zKUzYPeVdQxJpudO3jB1rv1rjztk'  \
+  -iface [tap14]  \
+  -remote [public ip]:1194 \
+  -key  /usr/local/src/govpn-5.7/key.txt
+```
 
 4. check connect status
 **client side log output:**
-`2016/12/16 08:03:30.342891 udp.go:89: Handshake completed`
+
+```2016/12/16 08:03:30.342891 udp.go:89: Handshake completed```
+
 **service side log output:**
+
 ```
 2016/12/16 08:21:56.840962 udp.go:99: Peer handshake finished: 172.17.42.1:38760 B4GsJkH/T+BG0/iOUkkt/w
 2016/12/16 08:21:56.846214 udp.go:166: Peer created: B4GsJkH/T+BG0/iOUkkt/w
 ```
 
 **ping to check package alive**
+
 ```
 ➜  ~ ping 172.19.0.1                                                                                                                                                                                            
 PING 172.19.0.1 (172.19.0.1) 56(84) bytes of data.
