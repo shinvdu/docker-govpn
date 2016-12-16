@@ -49,7 +49,7 @@ get the verifier, and replace the default one in config/peers.yaml. This is the 
 
 example
 
-1. ceate the network interface:
+1. create the network interface:
 ```
 tunctl -t tap14
 ip addr add 172.19.0.1/24 dev tap14
@@ -64,7 +64,8 @@ govpn is is pass I just type.
 3. connect. 
 
 ```
-$: sudo ./govpn-client -verifier  '$argon2d$m=4096,t=128,p=1$B4GsJkH/T+BG0/iOUkkt/w$GOEZuuAuucwIIX8zKUzYPeVdQxJpudO3jB1rv1rjztk'  \
+$: sudo ./govpn-client \
+   -verifier  '$argon2d$m=4096,t=128,p=1$B4GsJkH/T+BG0/iOUkkt/w$GOEZuuAuucwIIX8zKUzYPeVdQxJpudO3jB1rv1rjztk'  \
   -iface [tap14]  \
   -remote [public ip]:1194 \
   -key  /usr/local/src/govpn-5.7/key.txt
