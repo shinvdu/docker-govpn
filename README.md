@@ -23,6 +23,7 @@ $: docker run -it --rm \
    -v /etc/govpn:/etc/govpn  \
    --cap-add=NET_ADMIN  shinvdu/govpn
 ```
+Config file location: /etc/govpn/peers.yaml
 
 # How to create your own auth key?
 
